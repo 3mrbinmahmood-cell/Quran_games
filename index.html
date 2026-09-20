@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ألعاب القرآن والصرف | Quran Learning Games</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+        background: linear-gradient(135deg, #071a18, #10352f);
+        color: white;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 1000px;
+        margin: auto;
+        padding: 50px 20px;
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 45px;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        color: #c9ded8;
+        font-size: 1.15rem;
+        line-height: 1.8;
+    }
+
+    .games {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+    }
+
+    .game {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 16px;
+        padding: 28px;
+        text-decoration: none;
+        color: white;
+        transition: 0.2s;
+    }
+
+    .game:hover {
+        transform: translateY(-4px);
+        background: rgba(255,255,255,0.13);
+        border-color: #d5b86a;
+    }
+
+    .game h2 {
+        color: #e5c76b;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    .english {
+        direction: ltr;
+        text-align: left;
+        color: #c9ded8;
+        margin-top: 14px;
+    }
+
+    .play {
+        display: inline-block;
+        margin-top: 18px;
+        background: #d5b86a;
+        color: #10221e;
+        padding: 9px 18px;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    footer {
+        text-align: center;
+        color: #9db7b0;
+        margin-top: 45px;
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 700px) {
+        .games {
+            grid-template-columns: 1fr;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        .container {
+            padding: 30px 15px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>ألعاب القرآن والصرف</h1>
+
+    <div class="subtitle">
+        ألعاب تعليمية تفاعلية لتعلّم مفردات القرآن الكريم والصرف العربي
+        <br>
+        Interactive games for learning Qur'anic vocabulary and Arabic morphology
+    </div>
+</header>
+
+
+<div class="games">
+
+    <a class="game" href="sarf_game_light.html">
+        <h2>الصرف — النسخة المختصرة</h2>
+
+        <p>
+            نسخة خفيفة للتدرّب على أوزان الأفعال، بفعل واحد لكل وزن.
+        </p>
+
+        <p class="english">
+            Sarf Light — A quick introduction to Arabic verb patterns,
+            using one verb for each pattern.
+        </p>
+
+        <span class="play">ابدأ اللعبة · Play</span>
+    </a>
+
+
+    <a class="game" href="sarf_game_full_list.html">
+        <h2>الصرف — النسخة الكاملة</h2>
+
+        <p>
+            تدريب أوسع على أوزان الأفعال وتصريفها مع مجموعة أكبر من الأفعال.
+        </p>
+
+        <p class="english">
+            Sarf Full — Comprehensive practice with Arabic verb patterns
+            and a larger collection of verbs.
+        </p>
+
+        <span class="play">ابدأ اللعبة · Play</span>
+    </a>
+
+
+    <a class="game" href="quran_vocabulary_game_fixed.html">
+        <h2>مفردات القرآن — النسخة الكاملة</h2>
+
+        <p>
+            اختبر معرفتك بمفردات القرآن الكريم ومعانيها،
+            مع متابعة التقدّم ومراجعة الإجابات الضعيفة.
+        </p>
+
+        <p class="english">
+            Qur'an Vocabulary — Learn Qur'anic words and their meanings
+            with progress tracking and review.
+        </p>
+
+        <span class="play">ابدأ اللعبة · Play</span>
+    </a>
+
+
+    <a class="game" href="quran_vocabulary_game_kids_multibrowser.html">
+        <h2>مفردات القرآن للأطفال</h2>
+
+        <p>
+            نسخة مبسطة للأطفال تستخدم تعريفات عربية سهلة
+            لتعليم مفردات القرآن الكريم.
+        </p>
+
+        <p class="english">
+            Qur'an Vocabulary for Kids — Simple Arabic definitions
+            designed to make Qur'anic vocabulary easier for children.
+        </p>
+
+        <span class="play">ابدأ اللعبة · Play</span>
+    </a>
+
+</div>
+
+
+<footer>
+    تعلّم · راجع · تقدّم
+    <br>
+    Learn · Review · Progress
+</footer>
+
+</div>
+
+</body>
+</html>
