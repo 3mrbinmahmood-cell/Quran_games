@@ -31,16 +31,14 @@ header {
 }
 
 h1 {
-    font-size: 2.6rem;
-    margin-bottom: 12px;
+    font-size: 2.5rem;
+    margin: 0 0 12px;
 }
 
 .subtitle {
     color: #c9ded8;
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     line-height: 1.8;
-    max-width: 800px;
-    margin: auto;
 }
 
 .section {
@@ -48,7 +46,7 @@ h1 {
 }
 
 .section-title {
-    font-size: 1.65rem;
+    font-size: 1.6rem;
     margin-bottom: 18px;
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(255,255,255,.15);
@@ -63,22 +61,22 @@ h1 {
 .card {
     background: rgba(255,255,255,.07);
     border: 1px solid rgba(255,255,255,.12);
-    border-radius: 16px;
+    border-radius: 15px;
     padding: 24px;
     display: flex;
     flex-direction: column;
-    min-height: 200px;
-    transition: transform .2s, background .2s;
+    min-height: 190px;
+    transition: .2s;
 }
 
 .card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
     background: rgba(255,255,255,.11);
 }
 
 .card h3 {
     margin: 0 0 10px;
-    font-size: 1.3rem;
+    font-size: 1.25rem;
 }
 
 .card p {
@@ -108,12 +106,10 @@ h1 {
     padding: 12px 16px;
     border-radius: 9px;
     font-weight: bold;
-    transition: .15s;
 }
 
 .play:hover {
     background: #f2d87d;
-    transform: scale(1.01);
 }
 
 footer {
@@ -122,7 +118,6 @@ footer {
     margin-top: 60px;
     padding-top: 25px;
     border-top: 1px solid rgba(255,255,255,.1);
-    line-height: 1.8;
 }
 
 @media (max-width: 600px) {
@@ -132,10 +127,6 @@ footer {
 
     h1 {
         font-size: 1.9rem;
-    }
-
-    .section-title {
-        font-size: 1.4rem;
     }
 
     .games {
@@ -150,18 +141,13 @@ footer {
 <div class="container">
 
 <header>
+    <h1>لعبة تعليم مفردات القرآن والنحو والصرف</h1>
 
-<h1>لعبة تعليم مفردات القرآن والنحو والصرف</h1>
-
-<div class="subtitle">
-مجموعة ألعاب تعليمية تفاعلية لتعلّم مفردات القرآن الكريم
-والنحو والصرف
-</div>
-
+    <div class="subtitle">
+        مجموعة ألعاب تعليمية لتعلّم مفردات القرآن الكريم والنحو والصرف
+    </div>
 </header>
 
-
-<!-- مفردات القرآن -->
 
 <section class="section">
 
@@ -170,47 +156,37 @@ footer {
 <div class="games">
 
 <div class="card">
+    <span class="tag">النسخة الكاملة</span>
+    <h3>لعبة مفردات القرآن</h3>
 
-<span class="tag">النسخة الكاملة</span>
+    <p>
+        اختبار معاني مفردات القرآن الكريم.
+    </p>
 
-<h3>مفردات القرآن</h3>
-
-<p>
-اختبر معرفتك بمعاني مفردات القرآن الكريم
-من خلال أسئلة الاختيار المتعدد.
-</p>
-
-<a class="play"
-href="quran_vocabulary_game_fixed.html">
-ابدأ اللعبة
-</a>
-
+    <a class="play"
+       href="./quran_vocabulary_game_fixed.html">
+        ابدأ اللعبة
+    </a>
 </div>
 
 
 <div class="card">
+    <span class="tag">نسخة الأطفال</span>
+    <h3>مفردات القرآن للأطفال</h3>
 
-<span class="tag">نسخة الأطفال</span>
+    <p>
+        نسخة مبسطة بتعريفات سهلة للأطفال.
+    </p>
 
-<h3>مفردات القرآن للأطفال</h3>
-
-<p>
-نسخة مبسطة بتعريفات سهلة
-لتعليم الأطفال مفردات القرآن الكريم.
-</p>
-
-<a class="play"
-href="quran_vocabulary_game_kids_multibrowser.html">
-ابدأ اللعبة
-</a>
-
+    <a class="play"
+       href="./quran_vocabulary_game_kids_multibrowser.html">
+        ابدأ اللعبة
+    </a>
 </div>
 
 </div>
 </section>
 
-
-<!-- المطابقة -->
 
 <section class="section">
 
@@ -219,96 +195,76 @@ href="quran_vocabulary_game_kids_multibrowser.html">
 <div class="games">
 
 <div class="card">
+    <span class="tag">النسخة الكاملة</span>
+    <h3>مطابقة مفردات القرآن</h3>
 
-<span class="tag">النسخة الكاملة</span>
+    <p>
+        مطابقة الكلمات القرآنية بمعانيها الصحيحة.
+    </p>
 
-<h3>مطابقة مفردات القرآن</h3>
-
-<p>
-صِل الكلمات القرآنية بمعانيها الصحيحة
-بطريقة تفاعلية.
-</p>
-
-<a class="play"
-href="quran_vocab_matching_full.html">
-ابدأ اللعبة
-</a>
-
+    <a class="play"
+       href="./quran_vocab_matching_full.html">
+        ابدأ اللعبة
+    </a>
 </div>
 
 
 <div class="card">
+    <span class="tag">نسخة الأطفال</span>
+    <h3>مطابقة المفردات للأطفال</h3>
 
-<span class="tag">نسخة الأطفال</span>
+    <p>
+        نسخة مبسطة من لعبة المطابقة.
+    </p>
 
-<h3>مطابقة المفردات للأطفال</h3>
-
-<p>
-نسخة مبسطة لمطابقة الكلمات القرآنية
-بمعانيها.
-</p>
-
-<a class="play"
-href="quran_vocab_matching_kids.html">
-ابدأ اللعبة
-</a>
-
+    <a class="play"
+       href="./quran_vocab_matching_kids.html">
+        ابدأ اللعبة
+    </a>
 </div>
 
 </div>
 </section>
 
 
-<!-- استخرج -->
-
 <section class="section">
 
-<h2 class="section-title">استخرج الكلمة</h2>
+<h2 class="section-title">استخرج</h2>
 
 <div class="games">
 
 <div class="card">
+    <span class="tag">النسخة الكاملة</span>
+    <h3>استخرج مفردات القرآن</h3>
 
-<span class="tag">النسخة الكاملة</span>
+    <p>
+        استخرج الكلمة القرآنية المطلوبة اعتمادًا على معناها.
+    </p>
 
-<h3>استخرج مفردات القرآن</h3>
-
-<p>
-اقرأ الآية ثم استخرج الكلمة المطلوبة
-اعتمادًا على معناها.
-</p>
-
-<a class="play"
-href="istakhraj_quran_vocab_game.html">
-ابدأ اللعبة
-</a>
-
+    <a class="play"
+       href="./istakhraj_quran_vocab_game.html">
+        ابدأ اللعبة
+    </a>
 </div>
 
 
 <div class="card">
+    <span class="tag">نسخة الأطفال</span>
+    <h3>استخرج للأطفال</h3>
 
-<span class="tag">نسخة الأطفال</span>
+    <p>
+        النسخة المبسطة من لعبة استخرج.
+    </p>
 
-<h3>استخرج للأطفال</h3>
-
-<p>
-نسخة مبسطة من لعبة استخراج
-المفردة القرآنية من السياق.
-</p>
-
-<a class="play"
-href="istakhraj_quran_vocab_game_kids(1).html">
-ابدأ اللعبة
-</a>
-
+    <a class="play"
+       href="./istakhraj_quran_vocab_game_kids(1).html">
+        ابدأ اللعبة
+    </a>
 </div>
 
 </div>
 </section>
 
-
-<!-- النحو -->
 
 <section class="section">
 
@@ -317,28 +273,22 @@ href="istakhraj_quran_vocab_game_kids(1).html">
 <div class="games">
 
 <div class="card">
+    <span class="tag">النحو</span>
+    <h3>لعبة النحو القرآني</h3>
 
-<span class="tag">النحو</span>
+    <p>
+        تمارين في الحالات والمصطلحات النحوية.
+    </p>
 
-<h3>لعبة النحو القرآني</h3>
-
-<p>
-تدرب على الحالات والمصطلحات النحوية
-من خلال الأمثلة القرآنية.
-</p>
-
-<a class="play"
-href="nahw_quran_game_v2.html">
-ابدأ اللعبة
-</a>
-
+    <a class="play"
+       href="./nahw_quran_game_v2.html">
+        ابدأ اللعبة
+    </a>
 </div>
 
 </div>
 </section>
 
-
-<!-- الصرف -->
 
 <section class="section">
 
@@ -347,40 +297,32 @@ href="nahw_quran_game_v2.html">
 <div class="games">
 
 <div class="card">
+    <span class="tag">النسخة الكاملة</span>
+    <h3>لعبة الصرف الكاملة</h3>
 
-<span class="tag">النسخة الكاملة</span>
+    <p>
+        التدريب على الأوزان والتصريف بالمجموعة الكاملة.
+    </p>
 
-<h3>لعبة الصرف الكاملة</h3>
-
-<p>
-تدرب على الأوزان والتصريف باستخدام
-المجموعة الكاملة من الأفعال.
-</p>
-
-<a class="play"
-href="sarf_game_full_list.html">
-ابدأ اللعبة
-</a>
-
+    <a class="play"
+       href="./sarf_game_full_list.html">
+        ابدأ اللعبة
+    </a>
 </div>
 
 
 <div class="card">
+    <span class="tag">النسخة المبسطة</span>
+    <h3>لعبة الصرف المبسطة</h3>
 
-<span class="tag">نسخة الأطفال</span>
+    <p>
+        نسخة أخف لتعلم أوزان الصرف.
+    </p>
 
-<h3>لعبة الصرف للأطفال</h3>
-
-<p>
-نسخة مبسطة لتعلّم أوزان الصرف
-والتصريف.
-</p>
-
-<a class="play"
-href="sarf_game_light.html">
-ابدأ اللعبة
-</a>
-
+    <a class="play"
+       href="./sarf_game_light.html">
+        ابدأ اللعبة
+    </a>
 </div>
 
 </div>
@@ -388,11 +330,9 @@ href="sarf_game_light.html">
 
 
 <footer>
-
-لعبة تعليم مفردات القرآن والنحو والصرف
-<br>
-مشروع تعليمي مفتوح
-
+    لعبة تعليم مفردات القرآن والنحو والصرف
+    <br>
+    مشروع تعليمي مفتوح
 </footer>
 
 </div>
