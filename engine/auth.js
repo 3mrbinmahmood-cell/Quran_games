@@ -35,6 +35,6 @@ export async function googleLogin(){
   return cred.user;
 }
 export async function resendVerification(){need();if(!auth.currentUser)throw new Error("لا يوجد مستخدم مسجل.");await api.sendEmailVerification(auth.currentUser)}
-export async function refreshUser(){need();if(auth.currentUser){await api.reload(auth.currentUser);current=auth.currentUser;emit()}return current}
+export async function refreshUser(){need();if(auth.currentUser){await api.reload(auth.currentUser);await auth.currentUser.getIdToken(true);current=auth.currentUser;emit()}return current}
 export async function logout(){if(configured)await api.signOut(auth)}
 export function firestore(){return {db,api}}
