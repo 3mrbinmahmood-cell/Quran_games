@@ -53,8 +53,7 @@ function update(){
  const local=rounds.length&&rounds[ri].length?Math.round(matched.size/rounds[ri].length*100):0;$("localBar").style.width=local+"%";$("localText").textContent=local+"%";
  const done=Object.keys(state.mastered).length,gp=Math.round(done/manifest.total*100);state.globalPercent=gp;$("globalBar").style.width=gp+"%";$("globalText").textContent=gp+"% — "+done+" / "+manifest.total;
  const totals=new Array(115).fill(0),comp=new Array(115).fill(0);
- for(const ch of manifest.chunks){/* totals filled after manifest counts only at chunk level; exact totals are updated from loaded rows below */}
- for(const rows of chunkCache.values())for(const x of rows)totals[x.s]++;
+ for(let s=1;s<=114;s++)totals[s]=Number(manifest.surahCounts?.[s]||0);
  for(const s of Object.values(state.mastered))comp[s]=(comp[s]||0)+1;
  $("surahProgress").innerHTML="";
  for(let s=1;s<=114;s++){const e=document.createElement("div");e.className="seg";const pc=totals[s]?Math.min(100,Math.round(comp[s]/totals[s]*100)):0;e.style.setProperty("--p",pc+"%");e.title=s+". "+manifest.names[s]+" — "+comp[s]+(totals[s]?" / "+totals[s]:"")+" ("+pc+"%)";$("surahProgress").appendChild(e)}
