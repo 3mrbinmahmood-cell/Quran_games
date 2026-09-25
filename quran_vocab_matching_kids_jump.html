@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>لعبة مطابقة مفردات القرآن للصغار</title>
+<style>
+html,body{margin:0;background:#f6f3e9;font-family:Tahoma,Arial,sans-serif;color:#222}
+.nav{max-width:1000px;margin:14px auto 0;padding:12px 16px;background:#fff;border:1px solid #d8d3c5;border-radius:16px;display:flex;gap:10px;align-items:end;justify-content:center;flex-wrap:wrap}
+.nav label{display:grid;gap:5px;text-align:center}
+.nav input,.nav button{font:inherit;font-size:16px;padding:10px 12px;border:1px solid #aaa;border-radius:11px;background:#fff;min-height:44px}
+.nav button{background:#216a4e;color:#fff;cursor:pointer}
+#roundStatus{color:#666;min-width:210px;text-align:center;padding:10px}
+iframe{display:block;width:100%;height:calc(100vh - 92px);border:0;background:#f6f3e9}
+</style>
+</head>
+<body>
+<div class="nav">
+<label>اذهب إلى الجولة
+<input id="jumpRound" type="number" min="1" value="1" inputmode="numeric">
+</label>
+<button id="jumpBtn" type="button">اذهب</button>
+<div id="roundStatus">اختر السورة وعدد الكلمات ثم اضغط ابدأ داخل اللعبة.</div>
+</div>
+<iframe id="game" src="quran_vocab_matching_kids.html?v=3" title="لعبة مطابقة مفردات القرآن للصغار"></iframe>
+<script>
+(function(){
+ const frame=document.getElementById('game'),jump=document.getElementById('jumpRound'),
+ btn=document.getElementById('jumpBtn'),status=document.getElementById('roundStatus');
+ let rounds=[],cycle=1;
+
+ function buildRounds(w){
+   const src=w.pool.slice(),n=Math.max(1,Math.min(10,+w.document.getElementById('cnt').value||5));
+   const out=[];let remaining=src;
+   while(remaining.length){
+     const usedW={},usedD={},r=[],later=[];
+     for(const x of remaining){
+       if(r.length<n&&!usedW[x.w]&&!usedD[x.d]){
+         usedW[x.w]=1;usedD[x.d]=1;r.push(x);
+       }else later.push(x);
+     }
+     if(!r.length)r.push(later.shift());
+     out.push(r);remaining=later;
+   }
+   return out;
+ }
+ function show(w,i){
+   if(!rounds.length)return;
+   i=Math.max(0,Math.min(rounds.length-1,i));
+   w.round=rounds[i];w.rno=i+1;w.pos=i+1;w.render();w.stats();
+   jump.max=rounds.length;jump.value=i+1;
+   status.textContent='الجولة '+(i+1)+' من '+rounds.length+' — الدورة '+cycle;
+ }
+ function install(){
+   const w=frame.contentWindow,d=w.document;
+   if(!d.getElementById('start')||typeof w.start!=='function')return;
+   const originalStart=w.start;
+   function patchedStart(){
+     originalStart();
+     rounds=buildRounds(w);cycle=1;
+     if(rounds.length)show(w,0);
+     else status.textContent='لا توجد كلمات في هذا الاختبار.';
+   }
+   function nextRound(){
+     if(!rounds.length)return;
+     let i=(+jump.value||1);
+     if(i>=rounds.length){cycle++;show(w,0)}else show(w,i);
+   }
+   d.getElementById('start').onclick=patchedStart;
+   d.getElementById('next').onclick=nextRound;
+   d.getElementById('cnt').addEventListener('change',()=>{if(w.pool&&w.pool.length){rounds=buildRounds(w);show(w,0)}});
+   status.textContent='اختر السورة وعدد الكلمات ثم اضغط ابدأ داخل اللعبة.';
+ }
+ frame.addEventListener('load',install);
+ btn.onclick=function(){
+   const w=frame.contentWindow;
+   if(!rounds.length){status.textContent='اضغط ابدأ داخل اللعبة أولًا.';return}
+   let n=parseInt(jump.value,10);
+   if(!Number.isFinite(n))n=1;
+   n=Math.max(1,Math.min(rounds.length,n));
+   show(w,n-1);
+ };
+ jump.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();btn.click()}});
+})();
+</script>
+</body>
+</html>
