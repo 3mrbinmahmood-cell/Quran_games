@@ -1,8 +1,9 @@
 import { firebaseConfig } from "./firebase-config.js";
 const V="12.19.0";
-let auth=null,db=null,api=null,current=null;
+let auth=null,db=null,api=null,current=null,readyDone=false,readyResolve;
 const configured=!!firebaseConfig;
 const listeners=new Set();
+export const accountReady=new Promise(r=>{readyResolve=r});
 function emit(){for(const fn of listeners)fn(current,{configured})}
 export function onAccount(fn){listeners.add(fn);fn(current,{configured});return()=>listeners.delete(fn)}
 export function getAccount(){return current}
@@ -14,8 +15,9 @@ if(configured){
   const app=appMod.initializeApp(firebaseConfig);
   auth=authMod.getAuth(app); authMod.useDeviceLanguage(auth);
   db=fsMod.getFirestore(app); api={...authMod,...fsMod};
-  authMod.onAuthStateChanged(auth,u=>{current=u;emit()});
-}
+  authMod.onAuthStateChanged(auth,u=>{current=u;if(!readyDone){readyDone=true;readyResolve(u)}emit()});
+}else{readyDone=true;readyResolve(null)}
+
 function need(){if(!configured)throw new Error("Firebase غير مربوط بعد. ضع إعدادات المشروع في engine/firebase-config.js.")}
 export async function register(username,email,password){
   need();
