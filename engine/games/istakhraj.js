@@ -1,5 +1,6 @@
 import {loadProgress,saveProgress} from "../progress.js";
-const $=x=>document.getElementById(x),GAME="istakhraj",ROUND=10;
+const $=x=>document.getElementById(x),variant=new URLSearchParams(location.search).get("variant")==="kids"?"kids":"full",GAME="istakhraj-"+variant,ROUND=10;
+document.querySelector("h1").textContent=variant==="kids"?"استخرج مفردات القرآن — للأطفال":"استخرج مفردات القرآن";
 let manifest,names,chunkCache=new Map(),allCache=null,Q=[],p=0,answered=false,state={mastered:{},wrong:{},positions:{},globalPercent:0};
 class Backdrop extends Phaser.Scene{create(){const w=this.scale.width,h=this.scale.height;for(let i=0;i<18;i++){const r=this.add.circle(Phaser.Math.Between(0,w),Phaser.Math.Between(0,h),Phaser.Math.Between(15,60),0xd5b86a,.08);this.tweens.add({targets:r,x:r.x+Phaser.Math.Between(-90,90),y:r.y+Phaser.Math.Between(-150,150),duration:Phaser.Math.Between(5000,10000),yoyo:true,repeat:-1,ease:"Sine.inOut"})}}}
 new Phaser.Game({type:Phaser.AUTO,parent:"phaser",transparent:true,scale:{mode:Phaser.Scale.RESIZE,width:"100%",height:"100%"},scene:Backdrop});
