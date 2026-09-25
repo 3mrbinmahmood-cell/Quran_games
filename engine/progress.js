@@ -1,4 +1,4 @@
-import {getAccount,onAccount,isConfigured,firestore} from "./auth.js";
+import {getAccount,onAccount,isConfigured,firestore,accountReady} from "./auth.js";
 const PREFIX="qg-engine-progress:";
 let account=getAccount(); onAccount(u=>{account=u});
 function key(gameId){return PREFIX+gameId}
@@ -11,6 +11,8 @@ export function saveLocal(gameId,data){
 }
 export async function loadProgress(gameId){
   const local=loadLocal(gameId);
+  if(isConfigured())await accountReady;
+  account=getAccount();
   if(!isConfigured()||!account)return local;
   try{
     const {db,api}=firestore(),snap=await api.getDoc(api.doc(db,"users",account.uid,"progress",gameId));
