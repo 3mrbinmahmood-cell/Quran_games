@@ -3,107 +3,91 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>لعبة مطابقة مفردات القرآن — النسخة الكاملة</title>
-<style>html,body{margin:0;height:100%;background:#f6f3e9}iframe{display:block;width:100%;height:100vh;border:0;background:#f6f3e9}</style>
+<title>لعبة مطابقة مفردات القرآن — النسخة الكاملة — الانتقال إلى الجولة</title>
+<style>
+html,body{margin:0;background:#f6f3e9;font-family:Tahoma,Arial,sans-serif;color:#222}
+.nav{max-width:1000px;margin:14px auto 0;padding:12px 16px;background:#fff;border:1px solid #d8d3c5;border-radius:16px;display:flex;gap:10px;align-items:end;justify-content:center;flex-wrap:wrap}
+.nav label{display:grid;gap:5px;text-align:center;font-weight:700}
+.nav input,.nav button{font:inherit;font-size:16px;padding:10px 12px;border:1px solid #aaa;border-radius:11px;background:#fff;min-height:44px}
+.nav input{width:110px;text-align:center}
+.nav button{background:#216a4e;color:#fff;cursor:pointer;font-weight:700}
+#roundStatus{color:#666;min-width:210px;text-align:center;padding:10px}
+iframe{display:block;width:100%;height:calc(100vh - 92px);border:0;background:#f6f3e9}
+</style>
 </head>
 <body>
-<iframe id="game" src="‏‏quran_vocab_matching_kids - نسخة.html?v=full-rounds-1" title="لعبة مطابقة مفردات القرآن — النسخة الكاملة"></iframe>
+<div class="nav">
+<label>الجولة
+<input id="jumpRound" type="number" min="1" value="1" inputmode="numeric" aria-label="رقم الجولة">
+</label>
+<button id="jumpBtn" type="button">اذهب إلى الجولة</button>
+<div id="roundStatus">اختر السورة وعدد الكلمات ثم اضغط ابدأ داخل اللعبة.</div>
+</div>
+<iframe id="game" src="‏‏quran_vocab_matching_kids - نسخة.html?v=full-rounds-2" title="لعبة مطابقة مفردات القرآن — النسخة الكاملة"></iframe>
 <script>
 (function(){
- const frame=document.getElementById("game");
- frame.addEventListener("load",function(){
+ const frame=document.getElementById('game'),jump=document.getElementById('jumpRound'),
+ btn=document.getElementById('jumpBtn'),status=document.getElementById('roundStatus');
+ let rounds=[],cycle=1,currentIndex=0;
+
+ function buildRounds(w){
+   const src=w.pool.slice(),n=Math.max(1,Math.min(10,+w.document.getElementById('cnt').value||5));
+   const out=[];let remaining=src;
+   while(remaining.length){
+     const usedW={},usedD={},r=[],later=[];
+     for(const x of remaining){
+       if(r.length<n&&!usedW[x.w]&&!usedD[x.d]){
+         usedW[x.w]=1;usedD[x.d]=1;r.push(x);
+       }else later.push(x);
+     }
+     if(!r.length)r.push(later.shift());
+     out.push(r);remaining=later;
+   }
+   return out;
+ }
+ function show(w,i){
+   if(!rounds.length)return;
+   i=Math.max(0,Math.min(rounds.length-1,i));
+   currentIndex=i;
+   w.round=rounds[i];w.rno=i+1;w.pos=i+1;w.render();w.stats();
+   jump.max=rounds.length;jump.value=i+1;
+   status.textContent='الجولة '+(i+1)+' من '+rounds.length+' — الدورة '+cycle;
+ }
+ function install(){
    const w=frame.contentWindow,d=w.document;
-   if(!d.getElementById("start")||!w.DATA||typeof w.render!=="function")return;
-
-   const style=d.createElement("style");
-   style.textContent='input[type=number]{font:inherit;font-size:16px;padding:10px;border:1px solid #aaa;border-radius:11px;background:#fff;min-height:44px;width:110px}.jumpctrl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:end;margin-top:12px;padding-top:12px;border-top:1px solid #eee}.jumpctrl label{display:grid;gap:5px;text-align:center}.roundinfo{color:#666;min-width:180px;text-align:center;padding:10px}';
-   d.head.appendChild(style);
-
-   const card=d.getElementById("start").closest(".card");
-   const box=d.createElement("div");
-   box.className="jumpctrl";
-   box.innerHTML='<label>اذهب إلى الجولة<input id="jumpRound" type="number" min="1" value="1" inputmode="numeric"></label><button id="jumpBtn" type="button">اذهب</button><span id="roundTotal" class="roundinfo">اختر السورة ثم اضغط ابدأ</span>';
-   card.appendChild(box);
-
-   let rounds=[],roundIndex=0,cycle=1;
-   const baseRender=w.render;
-
-   function buildRounds(src,n){
-     let remaining=src.slice(),out=[];
-     while(remaining.length){
-       const usedW={},usedD={},r=[],later=[];
-       for(const x of remaining){
-         if(r.length<n&&!usedW[x.w]&&!usedD[x.d]){usedW[x.w]=1;usedD[x.d]=1;r.push(x)}
-         else later.push(x);
-       }
-       if(!r.length)r.push(later.shift());
-       out.push(r);remaining=later;
-     }
-     return out;
+   if(!d.getElementById('start')||typeof w.start!=='function'){
+     status.textContent='تعذر تحميل أداة الجولات. حدّث الصفحة.';
+     return;
    }
-
-   function enhancedStats(){
-     d.getElementById("rn").textContent=rounds.length?roundIndex+1:0;
-     d.getElementById("ok").textContent=w.good;
-     d.getElementById("er").textContent=w.bad;
-     let m=0;Object.keys(w.P).forEach(k=>{if(w.P[k].st>=3)m++});
-     d.getElementById("mas").textContent=m;
-     const pc=rounds.length?Math.round((roundIndex+1)/rounds.length*100):0;
-     d.getElementById("bar").style.width=pc+"%";
-     d.getElementById("prog").textContent=rounds.length
-       ?"التقدم: "+pc+"% — الجولة "+(roundIndex+1)+" من "+rounds.length+" — الدورة "+cycle
-       :"جاهز";
-     d.getElementById("roundTotal").textContent=rounds.length
-       ?"الجولة "+(roundIndex+1)+" من "+rounds.length
-       :"اختر السورة ثم اضغط ابدأ";
+   const originalStart=w.start;
+   function patchedStart(){
+     originalStart();
+     rounds=buildRounds(w);cycle=1;currentIndex=0;
+     if(rounds.length)show(w,0);
+     else status.textContent='لا توجد كلمات في هذا الاختبار.';
    }
-
-   function show(i){
+   function nextRound(){
      if(!rounds.length)return;
-     i=Math.max(0,Math.min(rounds.length-1,i));
-     roundIndex=i;w.rno=i+1;w.round=rounds[i];
-     d.getElementById("jumpRound").value=i+1;
-     baseRender();enhancedStats();
+     if(currentIndex>=rounds.length-1){cycle++;show(w,0)}
+     else show(w,currentIndex+1);
    }
-
-   function startEnhanced(){
-     const m=d.getElementById("mode").value,s=+d.getElementById("surah").value;
-     w.pool=w.DATA.filter(x=>m==="all"||(m==="chapter"&&x.s===s)||(m==="wrong"&&w.P[x.id]&&w.P[x.id].w>0));
-     w.pool.sort((a,b)=>a.lv-b.lv||a.a-b.a||a.s-b.s||String(a.id).localeCompare(String(b.id)));
-     w.good=0;w.bad=0;w.rno=0;w.pos=0;cycle=1;roundIndex=0;
-     rounds=buildRounds(w.pool,+d.getElementById("cnt").value);
-     if(rounds.length){
-       d.getElementById("jumpRound").min=1;
-       d.getElementById("jumpRound").max=rounds.length;
-       show(0);
-     }else{
-       w.round=[];
-       d.getElementById("msg").textContent="لا توجد كلمات في هذا الاختبار.";
-       enhancedStats();
-     }
-   }
-
-   function nextEnhanced(){
-     if(!rounds.length)return;
-     if(roundIndex>=rounds.length-1){cycle++;show(0)}else show(roundIndex+1);
-   }
-
-   function jump(){
-     if(!rounds.length){d.getElementById("msg").textContent="ابدأ الاختبار أولًا ثم اختر رقم الجولة.";return}
-     let n=parseInt(d.getElementById("jumpRound").value,10);
-     if(!Number.isFinite(n))n=1;
-     n=Math.max(1,Math.min(rounds.length,n));
-     show(n-1);
-     d.getElementById("msg").textContent="انتقلت إلى الجولة "+n+" من "+rounds.length+".";
-   }
-
-   w.start=startEnhanced;w.newRound=nextEnhanced;w.stats=enhancedStats;
-   d.getElementById("start").onclick=startEnhanced;
-   d.getElementById("next").onclick=nextEnhanced;
-   d.getElementById("jumpBtn").onclick=jump;
-   d.getElementById("jumpRound").addEventListener("keydown",e=>{if(e.key==="Enter")jump()});
-   d.getElementById("cnt").addEventListener("change",function(){if(w.pool.length){rounds=buildRounds(w.pool,+this.value);cycle=1;show(0)}});
- });
+   d.getElementById('start').onclick=patchedStart;
+   d.getElementById('next').onclick=nextRound;
+   d.getElementById('cnt').addEventListener('change',()=>{
+     if(w.pool&&w.pool.length){rounds=buildRounds(w);cycle=1;show(w,0)}
+   });
+   status.textContent='اختر السورة وعدد الكلمات ثم اضغط ابدأ داخل اللعبة.';
+ }
+ frame.addEventListener('load',install);
+ btn.onclick=function(){
+   const w=frame.contentWindow;
+   if(!rounds.length){status.textContent='اضغط ابدأ داخل اللعبة أولًا.';return}
+   let n=parseInt(jump.value,10);
+   if(!Number.isFinite(n))n=1;
+   n=Math.max(1,Math.min(rounds.length,n));
+   show(w,n-1);
+ };
+ jump.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();btn.click()}});
 })();
 </script>
 </body>
