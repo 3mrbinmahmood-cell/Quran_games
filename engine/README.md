@@ -32,7 +32,7 @@ Until this is done, the engine works in local/offline mode and saves progress in
 - [x] Istakhraj — Full — 5,311 typed-answer questions with surah/round navigation.
 - [x] Istakhraj — Kids — current kids source migrated to the shared Istakhraj engine.
 - [ ] Sarf — Full
-- [ ] Quranic Nahw
+- [x] Quranic Nahw — 27 examples; five grammar questions then full ayah + source-book irab before continuing.
 
 ## Progress contract
 Every migrated game saves a small JSON document under a stable game ID. The same data is saved locally and, for verified users, under:
