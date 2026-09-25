@@ -26,7 +26,7 @@ Until this is done, the engine works in local/offline mode and saves progress in
 ## Migration status
 - [x] Sarf Light / Kids — Phaser Engine v1; 17 verbs, 578 active conjugation questions, no repeat before each 34-question verb set completes.
 - [x] Quran Vocabulary — Multiple Choice — Phaser Engine v1; 5,311 entries, surah/round navigation, wrong-answer review, local/full progress.
-- [ ] Quran Vocabulary — Kids
+- [x] Quran Vocabulary — Kids — shared multiple-choice engine using the simplified kids definitions.
 - [x] Matching — Full — shared Phaser matching engine with 1–10 items, direct round jump, and surah progress.
 - [x] Matching — Kids — simplified definitions, same full-cycle round engine.
 - [x] Istakhraj — Full — 5,311 typed-answer questions with surah/round navigation.
