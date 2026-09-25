@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>لعبة مطابقة مفردات القرآن — النسخة الكاملة</title>
+<style>html,body{margin:0;height:100%;background:#f6f3e9}iframe{display:block;width:100%;height:100vh;border:0;background:#f6f3e9}</style>
+</head>
+<body>
+<iframe id="game" src="‏‏quran_vocab_matching_kids - نسخة.html?v=full-rounds-1" title="لعبة مطابقة مفردات القرآن — النسخة الكاملة"></iframe>
+<script>
+(function(){
+ const frame=document.getElementById("game");
+ frame.addEventListener("load",function(){
+   const w=frame.contentWindow,d=w.document;
+   if(!d.getElementById("start")||!w.DATA||typeof w.render!=="function")return;
+
+   const style=d.createElement("style");
+   style.textContent='input[type=number]{font:inherit;font-size:16px;padding:10px;border:1px solid #aaa;border-radius:11px;background:#fff;min-height:44px;width:110px}.jumpctrl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:end;margin-top:12px;padding-top:12px;border-top:1px solid #eee}.jumpctrl label{display:grid;gap:5px;text-align:center}.roundinfo{color:#666;min-width:180px;text-align:center;padding:10px}';
+   d.head.appendChild(style);
+
+   const card=d.getElementById("start").closest(".card");
+   const box=d.createElement("div");
+   box.className="jumpctrl";
+   box.innerHTML='<label>اذهب إلى الجولة<input id="jumpRound" type="number" min="1" value="1" inputmode="numeric"></label><button id="jumpBtn" type="button">اذهب</button><span id="roundTotal" class="roundinfo">اختر السورة ثم اضغط ابدأ</span>';
+   card.appendChild(box);
+
+   let rounds=[],roundIndex=0,cycle=1;
+   const baseRender=w.render;
+
+   function buildRounds(src,n){
+     let remaining=src.slice(),out=[];
+     while(remaining.length){
+       const usedW={},usedD={},r=[],later=[];
+       for(const x of remaining){
+         if(r.length<n&&!usedW[x.w]&&!usedD[x.d]){usedW[x.w]=1;usedD[x.d]=1;r.push(x)}
+         else later.push(x);
+       }
+       if(!r.length)r.push(later.shift());
+       out.push(r);remaining=later;
+     }
+     return out;
+   }
+
+   function enhancedStats(){
+     d.getElementById("rn").textContent=rounds.length?roundIndex+1:0;
+     d.getElementById("ok").textContent=w.good;
+     d.getElementById("er").textContent=w.bad;
+     let m=0;Object.keys(w.P).forEach(k=>{if(w.P[k].st>=3)m++});
+     d.getElementById("mas").textContent=m;
+     const pc=rounds.length?Math.round((roundIndex+1)/rounds.length*100):0;
+     d.getElementById("bar").style.width=pc+"%";
+     d.getElementById("prog").textContent=rounds.length
+       ?"التقدم: "+pc+"% — الجولة "+(roundIndex+1)+" من "+rounds.length+" — الدورة "+cycle
+       :"جاهز";
+     d.getElementById("roundTotal").textContent=rounds.length
+       ?"الجولة "+(roundIndex+1)+" من "+rounds.length
+       :"اختر السورة ثم اضغط ابدأ";
+   }
+
+   function show(i){
+     if(!rounds.length)return;
+     i=Math.max(0,Math.min(rounds.length-1,i));
+     roundIndex=i;w.rno=i+1;w.round=rounds[i];
+     d.getElementById("jumpRound").value=i+1;
+     baseRender();enhancedStats();
+   }
+
+   function startEnhanced(){
+     const m=d.getElementById("mode").value,s=+d.getElementById("surah").value;
+     w.pool=w.DATA.filter(x=>m==="all"||(m==="chapter"&&x.s===s)||(m==="wrong"&&w.P[x.id]&&w.P[x.id].w>0));
+     w.pool.sort((a,b)=>a.lv-b.lv||a.a-b.a||a.s-b.s||String(a.id).localeCompare(String(b.id)));
+     w.good=0;w.bad=0;w.rno=0;w.pos=0;cycle=1;roundIndex=0;
+     rounds=buildRounds(w.pool,+d.getElementById("cnt").value);
+     if(rounds.length){
+       d.getElementById("jumpRound").min=1;
+       d.getElementById("jumpRound").max=rounds.length;
+       show(0);
+     }else{
+       w.round=[];
+       d.getElementById("msg").textContent="لا توجد كلمات في هذا الاختبار.";
+       enhancedStats();
+     }
+   }
+
+   function nextEnhanced(){
+     if(!rounds.length)return;
+     if(roundIndex>=rounds.length-1){cycle++;show(0)}else show(roundIndex+1);
+   }
+
+   function jump(){
+     if(!rounds.length){d.getElementById("msg").textContent="ابدأ الاختبار أولًا ثم اختر رقم الجولة.";return}
+     let n=parseInt(d.getElementById("jumpRound").value,10);
+     if(!Number.isFinite(n))n=1;
+     n=Math.max(1,Math.min(rounds.length,n));
+     show(n-1);
+     d.getElementById("msg").textContent="انتقلت إلى الجولة "+n+" من "+rounds.length+".";
+   }
+
+   w.start=startEnhanced;w.newRound=nextEnhanced;w.stats=enhancedStats;
+   d.getElementById("start").onclick=startEnhanced;
+   d.getElementById("next").onclick=nextEnhanced;
+   d.getElementById("jumpBtn").onclick=jump;
+   d.getElementById("jumpRound").addEventListener("keydown",e=>{if(e.key==="Enter")jump()});
+   d.getElementById("cnt").addEventListener("change",function(){if(w.pool.length){rounds=buildRounds(w.pool,+this.value);cycle=1;show(0)}});
+ });
+})();
+</script>
+</body>
+</html>
