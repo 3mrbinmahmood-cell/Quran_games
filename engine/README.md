@@ -31,7 +31,7 @@ Until this is done, the engine works in local/offline mode and saves progress in
 - [x] Matching — Kids — simplified definitions, same full-cycle round engine.
 - [x] Istakhraj — Full — 5,311 typed-answer questions with surah/round navigation.
 - [x] Istakhraj — Kids — current kids source migrated to the shared Istakhraj engine.
-- [ ] Sarf — Full
+- [x] Sarf — Full — 1,451 playable verbs / 49,334 questions; compact bitset progress; 13 restricted entries excluded from automatic conjugation.
 - [x] Quranic Nahw — 27 examples; five grammar questions then full ayah + source-book irab before continuing.
 
 ## Progress contract
