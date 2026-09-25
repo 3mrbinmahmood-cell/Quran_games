@@ -1,0 +1,35 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quran Games Engine</title><link rel="stylesheet" href="styles.css"></head><body>
+<div class="wrap">
+<div class="top"><div class="brand"><h1>Quran Games Engine</h1><p>منصة موحّدة للألعاب والحسابات وحفظ التقدم</p></div><div class="account"><span id="accountState" class="small">وضع محلي</span><button id="accountBtn" class="btn">الحساب / تسجيل الدخول</button><button id="logoutBtn" class="btn alt" hidden>خروج</button></div></div>
+<div class="panel"><b>التقدم العام في النسخ المحوّلة للمحرك</b><div class="progressline" style="margin-top:10px"><i id="globalBar"></i></div><div id="globalText" class="small" style="margin-top:8px">0%</div></div>
+<div class="panel"><b>التحويل يتم لعبةً لعبة</b><p class="small">تبقى النسخ الأصلية كما هي أثناء الاختبار. أول تحويل فعلي هو لعبة الصرف الخفيفة، ثم ننقل بقية ألعاب صفحة الفهرس إلى نفس المحرك.</p></div>
+<div class="grid">
+<div class="game"><span class="tag ready">Engine v1</span><h2>لعبة الصرف — للأطفال</h2><p>Phaser + حفظ موضع السؤال + تقدم الجولة + تقدم المجموعة الكاملة.</p><a href="games/sarf-light.html">ابدأ نسخة المحرك</a></div>
+<div class="game"><span class="tag">التالي</span><h2>مفردات القرآن — اختيار من متعدد</h2><p>سيُحفظ موضع السورة والجولة والأسئلة الضعيفة.</p><a href="../quran_vocabulary_game_fixed.html">النسخة الحالية</a></div>
+<div class="game"><span class="tag">قيد التحويل</span><h2>مفردات القرآن — للأطفال</h2><p>نسخة الأطفال للاختيار من متعدد.</p><a href="../quran_vocabulary_game_kids_multibrowser.html">النسخة الحالية</a></div>
+<div class="game"><span class="tag">قيد التحويل</span><h2>مطابقة مفردات القرآن — الكاملة</h2><p>السورة والجولة والتقدم الشامل.</p><a href="../quran_vocab_matching_full_rounds.html">النسخة الحالية</a></div>
+<div class="game"><span class="tag">قيد التحويل</span><h2>مطابقة مفردات القرآن للصغار</h2><p>اختيار الجولة والتقدم حسب السور.</p><a href="../quran_vocab_matching_kids_rounds.html">النسخة الحالية</a></div>
+<div class="game"><span class="tag">قيد التحويل</span><h2>استخرج مفردات القرآن</h2><p>نسخة الاستخراج الكاملة.</p><a href="../istakhraj_quran_vocab_game.html">النسخة الحالية</a></div>
+<div class="game"><span class="tag">قيد التحويل</span><h2>استخرج مفردات القرآن — للأطفال</h2><p>نسخة الاستخراج المبسطة.</p><a href="../‏‏istakhraj_quran_vocab_game - نسخة.html">النسخة الحالية</a></div>
+<div class="game"><span class="tag">قيد التحويل</span><h2>لعبة الصرف — النسخة الكاملة</h2><p>ستستخدم نفس نظام الصرف بعد اعتماد النسخة الخفيفة.</p><a href="../sarf_game_full_list.html">النسخة الحالية</a></div>
+<div class="game"><span class="tag">قيد التحويل</span><h2>لعبة النحو القرآني</h2><p>سيُحافظ على عرض الآية كاملة والإعراب قبل زر التالي.</p><a href="../‏‏nahw_quran_game_v2 - نسخة.html?v=5">النسخة الحالية</a></div>
+</div></div>
+<div id="modal" class="modal hide"><div class="box"><h2>الحساب</h2><p id="firebaseNote" class="small"></p>
+<div class="field"><label>اسم المستخدم</label><input id="username" autocomplete="nickname"></div>
+<div class="field"><label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="email"></div>
+<div class="field"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password"></div>
+<div class="row"><button id="registerBtn" class="btn">إنشاء حساب</button><button id="loginBtn" class="btn">دخول بالبريد</button><button id="googleBtn" class="btn alt">الدخول بحساب Google</button></div>
+<div class="row" style="margin-top:10px"><button id="verifyBtn" class="btn alt">إعادة إرسال رسالة التحقق</button><button id="refreshBtn" class="btn alt">تحققت من البريد</button><button id="closeBtn" class="btn alt">إغلاق</button></div><div id="msg" class="msg"></div></div></div>
+<script type="module">
+import {onAccount,isConfigured,register,login,googleLogin,resendVerification,refreshUser,logout} from "./auth.js";
+const $=x=>document.getElementById(x),modal=$("modal"),msg=$("msg");
+$("accountBtn").onclick=()=>modal.classList.remove("hide");$("closeBtn").onclick=()=>modal.classList.add("hide");
+$("firebaseNote").textContent=isConfigured()?"Firebase متصل. الحسابات السحابية جاهزة.":"بنية الحساب جاهزة، لكن Firebase لم يُربط بعد. الحفظ المحلي يعمل الآن.";
+async function run(fn){msg.textContent="جارٍ التنفيذ...";try{await fn();msg.textContent="تم."}catch(e){msg.textContent=e.message||String(e)}}
+$("registerBtn").onclick=()=>run(()=>register($("username").value,$("email").value,$("password").value));
+$("loginBtn").onclick=()=>run(()=>login($("email").value,$("password").value));
+$("googleBtn").onclick=()=>run(()=>googleLogin());$("verifyBtn").onclick=()=>run(()=>resendVerification());$("refreshBtn").onclick=()=>run(()=>refreshUser());$("logoutBtn").onclick=()=>run(()=>logout());
+onAccount(u=>{if(u){$("accountState").textContent=(u.displayName||u.email)+(u.emailVerified?" — موثّق":" — البريد غير موثّق");$("logoutBtn").hidden=false}else{$("accountState").textContent="وضع محلي";$("logoutBtn").hidden=true}});
+function updateGlobal(){let p=0;try{p=JSON.parse(localStorage.getItem("qg-engine-progress:sarf-light")||"{}").globalPercent||0}catch{}$("globalBar").style.width=p+"%";$("globalText").textContent=p+"% من أول لعبة محوّلة";}
+updateGlobal();window.addEventListener("qg-progress",updateGlobal);
+</script></body></html>
