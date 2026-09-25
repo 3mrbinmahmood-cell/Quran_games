@@ -29,8 +29,8 @@ Until this is done, the engine works in local/offline mode and saves progress in
 - [ ] Quran Vocabulary — Kids
 - [x] Matching — Full — shared Phaser matching engine with 1–10 items, direct round jump, and surah progress.
 - [x] Matching — Kids — simplified definitions, same full-cycle round engine.
-- [ ] Istakhraj — Full
-- [ ] Istakhraj — Kids
+- [x] Istakhraj — Full — 5,311 typed-answer questions with surah/round navigation.
+- [x] Istakhraj — Kids — current kids source migrated to the shared Istakhraj engine.
 - [ ] Sarf — Full
 - [ ] Quranic Nahw
 
