@@ -1,5 +1,5 @@
 import {loadProgress,saveProgress} from "../progress.js";
-const GAME="vocab-full",ROUND=10,$=x=>document.getElementById(x);
+const variant=new URLSearchParams(location.search).get("variant")==="kids"?"kids":"full",GAME="vocab-"+variant,ROUND=10,$=x=>document.getElementById(x),manifestPath=variant==="kids"?"../data/vocab-kids-manifest.json":"../data/vocab-manifest.json";
 let manifest,allCache=null,chunkCache=new Map(),pool=[],Q=[],p=0,locked=false;
 let state={mastered:{},wrong:{},positions:{},globalPercent:0};
 class Backdrop extends Phaser.Scene{create(){const w=this.scale.width,h=this.scale.height;for(let i=0;i<20;i++){const r=this.add.circle(Phaser.Math.Between(0,w),Phaser.Math.Between(0,h),Phaser.Math.Between(15,60),0xd5b86a,.09);this.tweens.add({targets:r,x:r.x+Phaser.Math.Between(-100,100),y:r.y+Phaser.Math.Between(-160,160),duration:Phaser.Math.Between(5000,11000),yoyo:true,repeat:-1,ease:"Sine.inOut"})}}}
@@ -54,7 +54,7 @@ async function answer(btn,v,q){
  state.positions[key()]=p;updateBars();await saveProgress(GAME,state);$("next").hidden=false;
 }
 async function next(){if(!locked)return;p++;state.positions[key()]=p;await saveProgress(GAME,state);render()}
-manifest=await fetch("../data/vocab-manifest.json").then(r=>r.json());
+manifest=await fetch(manifestPath).then(r=>r.json());document.querySelector("h1").textContent=variant==="kids"?"مفردات القرآن — للأطفال":"مفردات القرآن — اختيار من متعدد";
 manifest.names.forEach((n,i)=>{if(!i)return;const o=document.createElement("option");o.value=i;o.textContent=i+". "+n;$("surah").appendChild(o)});
 const saved=await loadProgress(GAME);if(saved)state={mastered:{},wrong:{},positions:{},globalPercent:0,...saved,mastered:saved.mastered||{},wrong:saved.wrong||{},positions:saved.positions||{}};
 $("start").onclick=build;$("next").onclick=next;$("mode").onchange=()=>{$("round").value=1};$("surah").onchange=()=>{$("round").value=1};
