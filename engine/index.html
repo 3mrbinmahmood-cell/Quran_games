@@ -2,7 +2,7 @@
 <div class="wrap">
 <div class="top"><div class="brand"><h1>Quran Games Engine</h1><p>منصة موحّدة للألعاب والحسابات وحفظ التقدم</p></div><div class="account"><span id="accountState" class="small">وضع محلي</span><button id="accountBtn" class="btn">الحساب / تسجيل الدخول</button><button id="logoutBtn" class="btn alt" hidden>خروج</button></div></div>
 <div class="panel"><b>التقدم العام في النسخ المحوّلة للمحرك</b><div class="progressline" style="margin-top:10px"><i id="globalBar"></i></div><div id="globalText" class="small" style="margin-top:8px">0%</div></div>
-<div class="panel"><b>التحويل يتم لعبةً لعبة</b><p class="small">تبقى النسخ الأصلية كما هي أثناء الاختبار. تم تحويل الصرف الخفيف ومفردات القرآن الكاملة. نستمر في نقل بقية ألعاب صفحة الفهرس إلى نفس المحرك.</p></div>
+<div class="panel"><b>التحويل يتم لعبةً لعبة</b><p class="small">تبقى النسخ الأصلية كما هي أثناء الاختبار. تم إنشاء نسخة Engine v1 لجميع الألعاب التسع الموجودة في الفهرس. النسخ الأصلية ما زالت موجودة للمقارنة والاختبار قبل الاستبدال النهائي.</p></div>
 <div class="grid">
 <div class="game"><span class="tag ready">Engine v1</span><h2>لعبة الصرف — للأطفال</h2><p>Phaser + حفظ موضع السؤال + تقدم الجولة + تقدم المجموعة الكاملة.</p><a href="games/sarf-light.html">ابدأ نسخة المحرك</a></div>
 <div class="game"><span class="tag ready">Engine v1</span><h2>مفردات القرآن — اختيار من متعدد</h2><p>٥٣١١ مدخلًا، اختيار السورة والجولة، مراجعة الأخطاء، وتقدم محلي وكامل.</p><a href="games/vocab.html">ابدأ نسخة المحرك</a></div>
@@ -30,6 +30,6 @@ $("registerBtn").onclick=()=>run(()=>register($("username").value,$("email").val
 $("loginBtn").onclick=()=>run(()=>login($("email").value,$("password").value));
 $("googleBtn").onclick=()=>run(()=>googleLogin());$("verifyBtn").onclick=()=>run(()=>resendVerification());$("refreshBtn").onclick=()=>run(()=>refreshUser());$("logoutBtn").onclick=()=>run(()=>logout());
 onAccount(u=>{if(u){$("accountState").textContent=(u.displayName||u.email)+(u.emailVerified?" — موثّق":" — البريد غير موثّق");$("logoutBtn").hidden=false}else{$("accountState").textContent="وضع محلي";$("logoutBtn").hidden=true}});
-function updateGlobal(){let p=0;try{p=JSON.parse(localStorage.getItem("qg-engine-progress:sarf-light")||"{}").globalPercent||0}catch{}$("globalBar").style.width=p+"%";$("globalText").textContent=p+"% من أول لعبة محوّلة";}
+function updateGlobal(){const ids=["sarf-light","vocab-full","vocab-kids","matching-full","matching-kids","istakhraj-full","istakhraj-kids","sarf-full","nahw"];let sum=0,started=0;for(const id of ids){try{const x=JSON.parse(localStorage.getItem("qg-engine-progress:"+id)||"{}");if(x.updatedAt)started++;sum+=Number(x.globalPercent||0)}catch{}}const p=Math.round(sum/ids.length);$("globalBar").style.width=p+"%";$("globalText").textContent=p+"% عبر ٩ ألعاب — بدأ المستخدم "+started+" / 9";}
 updateGlobal();window.addEventListener("qg-progress",updateGlobal);
 </script></body></html>
