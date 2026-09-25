@@ -12,7 +12,7 @@ if(configured){
   const authMod=await import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`);
   const fsMod=await import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`);
   const app=appMod.initializeApp(firebaseConfig);
-  auth=authMod.getAuth(app); auth.useDeviceLanguage();
+  auth=authMod.getAuth(app); authMod.useDeviceLanguage(auth);
   db=fsMod.getFirestore(app); api={...authMod,...fsMod};
   authMod.onAuthStateChanged(auth,u=>{current=u;emit()});
 }
