@@ -53,6 +53,13 @@ if(chosen!=null){
  localStorage.setItem(cfg.key,chosen);
  localStorage.setItem(shadowKey,chosen);
  if(shadowTs)localStorage.setItem(markerKey,String(shadowTs));
+}else if(!cfg.legacy){
+ localStorage.removeItem(cfg.key);
+}
+if(chosen!=null&&(!validCloud||shadowTs>cloudTs)){
+ const now=Date.now();
+ shadowTs=now;localStorage.setItem(markerKey,String(now));
+ try{await saveProgress(gameId,{schema:"original-localstorage-v1",storageKey:cfg.key,value:parse(chosen),bridgeUpdatedAt:now})}catch(e){console.warn("Initial progress sync failed",e)}
 }
 let last=localStorage.getItem(cfg.key);
 frame.src=cfg.src;
