@@ -25,10 +25,13 @@ import {onAccount,isConfigured,register,login,googleLogin,resendVerification,ref
 const $=x=>document.getElementById(x),modal=$("modal"),msg=$("msg");
 $("accountBtn").onclick=()=>modal.classList.remove("hide");$("closeBtn").onclick=()=>modal.classList.add("hide");
 $("firebaseNote").textContent=isConfigured()?"Firebase متصل. الحسابات السحابية جاهزة.":"بنية الحساب جاهزة، لكن Firebase لم يُربط بعد. الحفظ المحلي يعمل الآن.";
-async function run(fn){msg.textContent="جارٍ التنفيذ...";try{await fn();msg.textContent="تم."}catch(e){msg.textContent=e.message||String(e)}}
+async function run(fn,{close=false,closeIf=null}={}){msg.textContent="جارٍ التنفيذ...";try{const result=await fn();msg.textContent="تم.";if(close||(closeIf&&closeIf(result))){modal.classList.add("hide");msg.textContent=""}return result}catch(e){msg.textContent=e.message||String(e)}}
 $("registerBtn").onclick=()=>run(()=>register($("username").value,$("email").value,$("password").value));
-$("loginBtn").onclick=()=>run(()=>login($("email").value,$("password").value));
-$("googleBtn").onclick=()=>run(()=>googleLogin());$("verifyBtn").onclick=()=>run(()=>resendVerification());$("refreshBtn").onclick=()=>run(()=>refreshUser());$("logoutBtn").onclick=()=>run(()=>logout());
+$("loginBtn").onclick=()=>run(()=>login($("email").value,$("password").value),{closeIf:u=>!!u?.emailVerified});
+$("googleBtn").onclick=()=>run(()=>googleLogin(),{close:true});
+$("verifyBtn").onclick=()=>run(()=>resendVerification());
+$("refreshBtn").onclick=()=>run(()=>refreshUser(),{closeIf:u=>!!u?.emailVerified});
+$("logoutBtn").onclick=()=>run(()=>logout());
 onAccount(u=>{if(u){$("accountState").textContent=(u.displayName||u.email)+(u.emailVerified?" — موثّق":" — البريد غير موثّق");$("logoutBtn").hidden=false}else{$("accountState").textContent="وضع محلي";$("logoutBtn").hidden=true}});
 function updateGlobal(){const ids=["sarf-light","vocab-full","vocab-kids","matching-full","matching-kids","istakhraj-full","istakhraj-kids","sarf-full","nahw"];let sum=0,started=0;for(const id of ids){try{const x=JSON.parse(localStorage.getItem("qg-engine-progress:"+id)||"{}");if(x.updatedAt)started++;sum+=Number(x.globalPercent||0)}catch{}}const p=Math.round(sum/ids.length);$("globalBar").style.width=p+"%";$("globalText").textContent=p+"% عبر ٩ ألعاب — بدأ المستخدم "+started+" / 9";}
 updateGlobal();window.addEventListener("qg-progress",updateGlobal);
