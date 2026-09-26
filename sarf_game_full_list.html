@@ -32,7 +32,7 @@
 </section>
 <div class="verbbox"><div id="verbTitle"></div><div id="verbMeta"></div><div id="verbNotes"></div></div>
 <div class="actions">
-<button id="prev" class="secondary">السابق <kbd>↑</kbd></button><button id="next">التالي <kbd>↓</kbd></button><button id="check">تحقّق <kbd>Enter</kbd></button><button id="retry" class="secondary">إعادة المحاولة</button><button id="show" class="secondary">أظهر الحل</button>
+<button id="prev" class="secondary">السابق <kbd>↑</kbd></button><button id="next">التالي <kbd>↓</kbd></button><button id="check">تحقّق <kbd>Enter</kbd></button><button id="retry" class="secondary">إعادة المحاولة</button><button id="show" class="secondary">أظهر الحل</button> <button id="speechInput" class="secondary" type="button">🎤 إدخال صوتي</button>
 </div>
 <p class="mobilehint">على الشاشة الصغيرة: اسحب الجدول أفقياً لعرض بقية الأعمدة.</p><div class="tablewrap" id="exercise">
 <table><thead><tr><th scope="col">الضمير</th><th scope="col">الماضي</th><th scope="col">المضارع المرفوع</th><th scope="col">الأمر</th></tr></thead><tbody id="tbody"></tbody></table>
@@ -264,5 +264,5 @@ showStats();render(false);
 })();
 
 </script>
-</body>
+<script type="module" src="engine/speech-input.js"></script></body>
 </html>
