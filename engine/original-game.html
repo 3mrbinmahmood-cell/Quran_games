@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quran Games</title>
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f6f3e9}
+iframe{display:block;width:100%;height:100%;border:0;background:#f6f3e9}
+#status{position:fixed;left:10px;bottom:10px;z-index:10;padding:5px 9px;border-radius:999px;background:#173b31;color:#fff;font:12px Tahoma,Arial,sans-serif;opacity:.72;pointer-events:none}
+</style>
+</head>
+<body>
+<iframe id="game" title="Quran Game"></iframe><div id="status">جاري تحميل التقدم…</div>
+<script type="module">
+import {loadProgress,saveProgress} from "./progress.js";
+const configs={
+ "vocab-full":{src:"../quran_vocabulary_game_fixed.html",key:"qvg1",legacy:true,title:"مفردات القرآن — اختيار من متعدد"},
+ "vocab-kids":{src:"../quran_vocabulary_game_kids_multibrowser.html",key:"qvgKids1",legacy:true,title:"مفردات القرآن — للأطفال"},
+ "matching-full":{src:"../quran_vocab_matching_full_rounds.html",key:"qmatchkids2",legacy:false,title:"مطابقة مفردات القرآن — الكاملة"},
+ "matching-kids":{src:"../quran_vocab_matching_kids_rounds.html",key:"qmatchkids2",legacy:true,title:"مطابقة مفردات القرآن — للأطفال"},
+ "istakhraj-full":{src:"../istakhraj_quran_vocab_game.html",key:"istakhrajWeak",legacy:true,title:"استخرج مفردات القرآن"},
+ "istakhraj-kids":{src:"../‏‏istakhraj_quran_vocab_game - نسخة.html",key:"istakhrajWeak",legacy:false,title:"استخرج مفردات القرآن — للأطفال"},
+ "sarf-full":{src:"../sarf_game_full_list.html",key:"sarf-classified-v1",legacy:true,title:"لعبة الصرف — النسخة الكاملة"},
+ "nahw":{src:"../‏‏nahw_quran_game_v2 - نسخة.html",key:"nahw-original-v1",legacy:true,title:"لعبة النحو القرآني"}
+};
+const gameId=new URLSearchParams(location.search).get("game");
+const cfg=configs[gameId];
+const frame=document.getElementById("game"),status=document.getElementById("status");
+if(!cfg){
+ status.textContent="لعبة غير معروفة";
+ throw new Error("Unknown game");
+}
+document.title=cfg.title;
+frame.title=cfg.title;
+const shadowKey="qg-original-shadow:"+gameId;
+const markerKey="qg-original-shadow-ts:"+gameId;
+const parse=raw=>{if(raw==null)return null;try{return JSON.parse(raw)}catch{return raw}};
+const stringify=value=>value==null?null:(typeof value==="string"?value:JSON.stringify(value));
+let shadow=localStorage.getItem(shadowKey);
+let shadowTs=Number(localStorage.getItem(markerKey)||0);
+if(shadow==null&&cfg.legacy)shadow=localStorage.getItem(cfg.key);
+let cloud=null;
+try{cloud=await loadProgress(gameId)}catch(e){console.warn(e)}
+const validCloud=cloud&&cloud.schema==="original-localstorage-v1"&&cloud.storageKey===cfg.key;
+const cloudTs=validCloud?Number(cloud.bridgeUpdatedAt||cloud.updatedAt||0):0;
+let chosen=shadow;
+if(validCloud&&(chosen==null||cloudTs>shadowTs)){
+ chosen=stringify(cloud.value);
+ shadowTs=cloudTs;
+}
+if(chosen!=null){
+ localStorage.setItem(cfg.key,chosen);
+ localStorage.setItem(shadowKey,chosen);
+ if(shadowTs)localStorage.setItem(markerKey,String(shadowTs));
+}
+let last=localStorage.getItem(cfg.key);
+frame.src=cfg.src;
+status.textContent=validCloud?"التقدم السحابي متصل":"الحفظ المحلي + السحابي جاهز";
+setTimeout(()=>status.style.display="none",2600);
+
+async function sync(){
+ const raw=localStorage.getItem(cfg.key);
+ if(raw===last)return;
+ last=raw;
+ const now=Date.now();
+ if(raw==null)localStorage.removeItem(shadowKey);else localStorage.setItem(shadowKey,raw);
+ localStorage.setItem(markerKey,String(now));
+ try{
+  await saveProgress(gameId,{schema:"original-localstorage-v1",storageKey:cfg.key,value:parse(raw),bridgeUpdatedAt:now});
+ }catch(e){console.warn("Progress sync failed",e)}
+}
+setInterval(sync,700);
+window.addEventListener("pagehide",sync);
+</script>
+</body>
+</html>
