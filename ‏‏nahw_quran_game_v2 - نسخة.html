@@ -78,8 +78,12 @@ const F=[
 ];
 
 let order=[], index=0, score=0, wrong=0, answered=0;
+const PROGRESS_KEY="nahw-original-v1";
 
 const $=id=>document.getElementById(id);
+function persist(finished=false){
+  try{localStorage.setItem(PROGRESS_KEY,JSON.stringify({order,index,score,wrong,finished,updatedAt:Date.now()}));}catch(_){}
+}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 
 function restartGame(){
@@ -90,6 +94,7 @@ function restartGame(){
   $("bar").style.width="0%";
   $("summary").className="summary hide";
   renderSet();
+  persist(false);
 }
 
 function makeOptions(field, correct){
@@ -192,6 +197,7 @@ $("nextSet").addEventListener("click",()=>{
   if(answered<F.length) return;
   if(index<order.length-1){
     index++;
+    persist(false);
     renderSet();
     window.scrollTo({top:0,behavior:"smooth"});
   }else{
@@ -203,11 +209,31 @@ $("nextSet").addEventListener("click",()=>{
     $("summary").innerHTML="<b>انتهت اللعبة.</b><br>النتيجة: "+score+" / "+(data.length*F.length)+" — الأخطاء: "+wrong+".<br>اضغط «إعادة اللعبة من البداية» لبدء دورة جديدة.";
     $("summary").className="summary";
     $("nextSet").className="primary hide";
+    persist(true);
   }
 });
 
 $("restart").addEventListener("click",restartGame);
-restartGame();
+function restoreGame(){
+  try{
+    const s=JSON.parse(localStorage.getItem(PROGRESS_KEY)||"null");
+    if(s&&Array.isArray(s.order)&&s.order.length===data.length){
+      order=s.order;index=Math.max(0,Math.min(order.length-1,Number(s.index)||0));
+      score=Math.max(0,Number(s.score)||0);wrong=Math.max(0,Number(s.wrong)||0);answered=0;
+      $("score").textContent=score;$("wrong").textContent=wrong;
+      if(s.finished){
+        $("bar").style.width="100%";$("questions").innerHTML="";$("aya").innerHTML="";$("ref").textContent="";
+        $("sourceReview").className="sourceReview hide";
+        $("summary").innerHTML="<b>انتهت اللعبة.</b><br>النتيجة: "+score+" / "+(data.length*F.length)+" — الأخطاء: "+wrong+".<br>اضغط «إعادة اللعبة من البداية» لبدء دورة جديدة.";
+        $("summary").className="summary";$("nextSet").className="primary hide";return;
+      }
+      $("bar").style.width=(index*F.length/(data.length*F.length)*100)+"%";
+      renderSet();return;
+    }
+  }catch(_){}
+  restartGame();
+}
+restoreGame();
 </script>
 </body>
 </html>
