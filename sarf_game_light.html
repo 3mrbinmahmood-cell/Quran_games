@@ -27,7 +27,7 @@
 <div id="searchResults" class="matches" aria-label="نتائج البحث" hidden></div>
 <section class="progressbox" aria-label="التقدم في الأوزان"><div class="progressline" id="progress"></div><progress id="positionBar" max="17" value="1" aria-label="موضع المثال"></progress><div class="small" id="subprogress"></div></section>
 <div class="verbbox"><div id="verbTitle"></div><div id="verbMeta"></div><div id="verbNotes"></div></div>
-<div class="actions"><button id="prev" class="secondary">السابق <kbd>↑</kbd></button><button id="next">التالي <kbd>↓</kbd></button><button id="check">تحقّق <kbd>Enter</kbd></button><button id="retry" class="secondary">إعادة المحاولة</button><button id="reshuffle" class="secondary">فراغات جديدة</button><button id="show" class="secondary">أظهر الحل</button></div>
+<div class="actions"><button id="prev" class="secondary">السابق <kbd>↑</kbd></button><button id="next">التالي <kbd>↓</kbd></button><button id="check">تحقّق <kbd>Enter</kbd></button><button id="retry" class="secondary">إعادة المحاولة</button><button id="reshuffle" class="secondary">فراغات جديدة</button><button id="show" class="secondary">أظهر الحل</button><button id="speechInput" class="secondary" type="button">🎤 إدخال صوتي</button></div><p id="speechStatus" class="small" style="text-align:center" aria-live="polite">اختر خانة ثم اضغط الميكروفون وتكلّم بالعربية.</p>
 <p class="mobilehint">اسحب الجدول أفقيًا لعرض بقية الأعمدة على الشاشة الصغيرة.</p>
 <div class="tablewrap"><table aria-label="جدول التصريف للمعلوم"><thead><tr><th scope="col">الضمير</th><th scope="col">الماضي</th><th scope="col">المضارع المرفوع</th><th scope="col">الأمر</th></tr></thead><tbody id="tbody"></tbody></table></div>
 <div id="feedback" role="status" aria-live="polite"></div>
@@ -206,5 +206,5 @@
  render(false);
 })();
 </script>
-</body>
+<script type="module" src="engine/speech-input.js"></script></body>
 </html>
