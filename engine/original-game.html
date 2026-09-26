@@ -15,14 +15,14 @@ iframe{display:block;width:100%;height:100%;border:0;background:#f6f3e9}
 <script type="module">
 import {loadProgress,saveProgress} from "./progress.js";
 const configs={
- "vocab-full":{src:"../quran_vocabulary_game_fixed.html",key:"qvg1",legacy:true,title:"مفردات القرآن — اختيار من متعدد"},
- "vocab-kids":{src:"../quran_vocabulary_game_kids_multibrowser.html",key:"qvgKids1",legacy:true,title:"مفردات القرآن — للأطفال"},
- "matching-full":{src:"../quran_vocab_matching_full_rounds.html",key:"qmatchkids2",legacy:false,title:"مطابقة مفردات القرآن — الكاملة"},
- "matching-kids":{src:"../quran_vocab_matching_kids_rounds.html",key:"qmatchkids2",legacy:true,title:"مطابقة مفردات القرآن — للأطفال"},
- "istakhraj-full":{src:"../istakhraj_quran_vocab_game.html",key:"istakhrajWeak",legacy:true,title:"استخرج مفردات القرآن"},
- "istakhraj-kids":{src:"../‏‏istakhraj_quran_vocab_game - نسخة.html",key:"istakhrajWeak",legacy:false,title:"استخرج مفردات القرآن — للأطفال"},
- "sarf-full":{src:"../sarf_game_full_list.html",key:"sarf-classified-v1",legacy:true,title:"لعبة الصرف — النسخة الكاملة"},
- "nahw":{src:"../‏‏nahw_quran_game_v2 - نسخة.html",key:"nahw-original-v1",legacy:true,title:"لعبة النحو القرآني"}
+ "vocab-full":{src:"../quran_vocabulary_game_fixed.html",key:"qvg1",legacy:true,type:"vocab",title:"مفردات القرآن — اختيار من متعدد"},
+ "vocab-kids":{src:"../quran_vocabulary_game_kids_multibrowser.html",key:"qvgKids1",legacy:true,type:"vocab",title:"مفردات القرآن — للأطفال"},
+ "matching-full":{src:"../quran_vocab_matching_full_rounds.html",key:"qmatchkids2",legacy:false,type:"matching",title:"مطابقة مفردات القرآن — الكاملة"},
+ "matching-kids":{src:"../quran_vocab_matching_kids_rounds.html",key:"qmatchkids2",legacy:true,type:"matching",title:"مطابقة مفردات القرآن — للأطفال"},
+ "istakhraj-full":{src:"../istakhraj_quran_vocab_game.html",key:"istakhrajWeak",legacy:true,type:"istakhraj",title:"استخرج مفردات القرآن"},
+ "istakhraj-kids":{src:"../‏‏istakhraj_quran_vocab_game - نسخة.html",key:"istakhrajWeak",legacy:false,type:"istakhraj",title:"استخرج مفردات القرآن — للأطفال"},
+ "sarf-full":{src:"../sarf_game_full_list.html",key:"sarf-classified-v1",legacy:true,type:"native",title:"لعبة الصرف — النسخة الكاملة"},
+ "nahw":{src:"../‏‏nahw_quran_game_v2 - نسخة.html",key:"nahw-original-v1",legacy:true,type:"native",title:"لعبة النحو القرآني"}
 };
 const gameId=new URLSearchParams(location.search).get("game");
 const cfg=configs[gameId];
@@ -77,6 +77,138 @@ async function sync(){
   await saveProgress(gameId,{schema:"original-localstorage-v1",storageKey:cfg.key,value:parse(raw),bridgeUpdatedAt:now});
  }catch(e){console.warn("Progress sync failed",e)}
 }
+
+// Exact-resume checkpoint. This is separate from mastery/weak-word progress.
+const sessionKey="qg-exact-session:"+gameId;
+const sessionCloudId=gameId+"-session";
+let exactSession=null,restoring=false,saveTimer=0;
+try{exactSession=JSON.parse(localStorage.getItem(sessionKey)||"null")}catch(_){}
+try{
+ const remote=await loadProgress(sessionCloudId);
+ if(remote&&Number(remote.updatedAt||0)>Number(exactSession?.updatedAt||0)){
+   exactSession=remote;localStorage.setItem(sessionKey,JSON.stringify(remote));
+ }
+}catch(e){console.warn("Session load failed",e)}
+function checkpoint(patch){
+ exactSession={...(exactSession||{}),...patch,updatedAt:Date.now()};
+ try{localStorage.setItem(sessionKey,JSON.stringify(exactSession))}catch(_){}
+ clearTimeout(saveTimer);
+ saveTimer=setTimeout(()=>{void saveProgress(sessionCloudId,exactSession)},350);
+}
+function seeded(seed){
+ let a=(Number(seed)||1)>>>0;
+ return function(){
+   a|=0;a=a+0x6D2B79F5|0;
+   let t=Math.imul(a^a>>>15,1|a);
+   t=t+Math.imul(t^t>>>7,61|t)^t;
+   return ((t^t>>>14)>>>0)/4294967296;
+ };
+}
+function newSeed(){return (Date.now()^(Math.random()*0xffffffff))>>>0}
+function textOf(d,id){return d.getElementById(id)?.textContent?.trim()||""}
+function hidden(el){return !el||el.classList.contains("hidden")||el.classList.contains("hide")||el.hidden}
+
+async function setupExactResume(){
+ if(cfg.type==="native")return;
+ const w=frame.contentWindow,d=w.document;
+ if(cfg.type==="vocab"){
+   const surah=d.getElementById("surah"),mode=d.getElementById("mode"),start=d.getElementById("start"),next=d.getElementById("next"),qc=d.getElementById("qc");
+   if(!surah||!mode||!start||!next||!qc)return;
+   if(exactSession?.active){
+     restoring=true;
+     if(exactSession.surah!=null)surah.value=String(exactSession.surah);
+     if(exactSession.mode)mode.value=exactSession.mode;
+     start.click();
+     const n=Math.max(0,Number(exactSession.resumeIndex)||0);
+     for(let i=0;i<n;i++)next.click();
+     restoring=false;
+   }
+   const snap=()=>{
+     if(restoring)return;
+     const m=textOf(d,"qc").match(/(\d+)\s*\/\s*(\d+)/);
+     if(!m)return;
+     const current=Math.max(0,Number(m[1])-1);
+     const answered=!hidden(next);
+     checkpoint({active:true,surah:surah.value,mode:mode.value,resumeIndex:current+(answered?1:0)});
+   };
+   start.addEventListener("click",()=>setTimeout(snap,0),true);
+   next.addEventListener("click",()=>setTimeout(snap,0));
+   surah.addEventListener("change",snap);mode.addEventListener("change",snap);
+   new MutationObserver(snap).observe(qc,{childList:true,subtree:true,characterData:true});
+   snap();
+   return;
+ }
+ if(cfg.type==="istakhraj"){
+   const surah=d.getElementById("surah"),type=d.getElementById("type"),count=d.getElementById("count"),start=d.getElementById("start"),weakStart=d.getElementById("weakStart"),next=d.getElementById("next"),counter=d.getElementById("counter");
+   if(!surah||!type||!count||!start||!next||!counter)return;
+   let modeKind=exactSession?.modeKind||"normal";
+   const prepare=(kind)=>{
+     modeKind=kind;
+     if(restoring)return;
+     const seed=newSeed();w.Math.random=seeded(seed);
+     checkpoint({active:true,modeKind:kind,seed,surah:surah.value,type:type.value,count:count.value,fingerprint:"",answered:false});
+   };
+   start.addEventListener("click",()=>prepare("normal"),true);
+   weakStart?.addEventListener("click",()=>prepare("weak"),true);
+   const fingerprint=()=>textOf(d,"ref")+"|"+textOf(d,"definition");
+   const snap=()=>{
+     if(restoring||hidden(d.getElementById("game")))return;
+     checkpoint({active:true,modeKind,seed:exactSession?.seed,surah:surah.value,type:type.value,count:count.value,fingerprint:fingerprint(),answered:!hidden(next)});
+   };
+   if(exactSession?.active&&exactSession.fingerprint){
+     restoring=true;
+     surah.value=String(exactSession.surah??surah.value);type.value=exactSession.type||type.value;count.value=String(exactSession.count||count.value);
+     w.Math.random=seeded(exactSession.seed||1);
+     (exactSession.modeKind==="weak"&&weakStart?weakStart:start).click();
+     const mm=textOf(d,"counter").match(/\/\s*(\d+)/),limit=Math.max(1,Number(mm?.[1])||5000);
+     for(let i=0;i<limit&&fingerprint()!==exactSession.fingerprint;i++)next.click();
+     if(exactSession.answered)next.click();
+     restoring=false;snap();
+   }
+   next.addEventListener("click",()=>setTimeout(snap,0));
+   new MutationObserver(snap).observe(counter,{childList:true,subtree:true,characterData:true});
+   snap();
+   return;
+ }
+ if(cfg.type==="matching"){
+   const outer=w,od=d,innerFrame=od.getElementById("game");
+   if(!innerFrame)return;
+   const ready=()=>new Promise(resolve=>{
+     if(innerFrame.contentDocument?.getElementById("start"))resolve();
+     else innerFrame.addEventListener("load",()=>resolve(),{once:true});
+   });
+   await ready();
+   const iw=innerFrame.contentWindow,id=iw.document;
+   const surah=id.getElementById("surah"),cnt=id.getElementById("cnt"),mode=id.getElementById("mode"),start=id.getElementById("start"),next=id.getElementById("next");
+   const jump=od.getElementById("jumpRound"),statusBox=od.getElementById("roundStatus");
+   if(!surah||!cnt||!mode||!start||!next||!jump)return;
+   const snap=()=>{
+     if(restoring)return;
+     const sm=textOf(od,"roundStatus").match(/الجولة\s+(\d+)\s+من\s+(\d+).*الدورة\s+(\d+)/);
+     checkpoint({active:true,surah:surah.value,cnt:cnt.value,mode:mode.value,round:Number(sm?.[1]||jump.value||1),rounds:Number(sm?.[2]||1),cycle:Number(sm?.[3]||1),seed:exactSession?.seed});
+   };
+   start.addEventListener("click",()=>{
+     if(restoring)return;
+     const seed=newSeed();iw.Math.random=seeded(seed);
+     checkpoint({active:true,surah:surah.value,cnt:cnt.value,mode:mode.value,round:1,cycle:1,seed});
+     setTimeout(snap,0);
+   },true);
+   if(exactSession?.active){
+     restoring=true;
+     surah.value=String(exactSession.surah??surah.value);cnt.value=String(exactSession.cnt||cnt.value);mode.value=exactSession.mode||mode.value;
+     iw.Math.random=seeded(exactSession.seed||1);start.click();
+     const rounds=Math.max(1,Number(exactSession.rounds)||Number(jump.max)||1);
+     const steps=Math.max(0,(Math.max(1,Number(exactSession.cycle)||1)-1)*rounds+(Math.max(1,Number(exactSession.round)||1)-1));
+     for(let i=0;i<steps;i++)next.click();
+     restoring=false;snap();
+   }
+   next.addEventListener("click",()=>setTimeout(snap,0));
+   if(statusBox)new MutationObserver(snap).observe(statusBox,{childList:true,subtree:true,characterData:true});
+   snap();
+ }
+}
+frame.addEventListener("load",()=>{void setupExactResume()},{once:true});
+
 setInterval(sync,700);
 window.addEventListener("pagehide",sync);
 </script>
