@@ -17,8 +17,8 @@ import {loadProgress,saveProgress} from "./progress.js";
 const configs={
  "vocab-full":{src:"../quran_vocabulary_game_fixed.html",key:"qvg1",legacy:true,type:"vocab",title:"مفردات القرآن — اختيار من متعدد"},
  "vocab-kids":{src:"../quran_vocabulary_game_kids_multibrowser.html",key:"qvgKids1",legacy:true,type:"vocab",title:"مفردات القرآن — للأطفال"},
- "matching-full":{src:"../quran_vocab_matching_full_rounds.html",key:"qmatchkids2",legacy:false,type:"matching",title:"مطابقة مفردات القرآن — الكاملة"},
- "matching-kids":{src:"../quran_vocab_matching_kids_rounds.html",key:"qmatchkids2",legacy:true,type:"matching",title:"مطابقة مفردات القرآن — للأطفال"},
+ "matching-full":{src:"../quran_vocab_matching_full_rounds.html?v=8",key:"qmatchkids2",legacy:false,type:"matching",title:"مطابقة مفردات القرآن — الكاملة"},
+ "matching-kids":{src:"../quran_vocab_matching_kids_rounds.html?v=8",key:"qmatchkids2",legacy:true,type:"matching",title:"مطابقة مفردات القرآن — للأطفال"},
  "istakhraj-full":{src:"../istakhraj_quran_vocab_game.html",key:"istakhrajWeak",legacy:true,type:"istakhraj",title:"استخرج مفردات القرآن"},
  "istakhraj-kids":{src:"../‏‏istakhraj_quran_vocab_game - نسخة.html",key:"istakhrajWeak",legacy:false,type:"istakhraj",title:"استخرج مفردات القرآن — للأطفال"},
  "sarf-full":{src:"../sarf_game_full_list.html?v=7",key:"sarf-classified-v1",legacy:true,type:"native",title:"لعبة الصرف — النسخة الكاملة"},
@@ -182,10 +182,30 @@ async function setupExactResume(){
    const surah=id.getElementById("surah"),cnt=id.getElementById("cnt"),mode=id.getElementById("mode"),start=id.getElementById("start"),next=id.getElementById("next");
    const jump=od.getElementById("jumpRound"),statusBox=od.getElementById("roundStatus");
    if(!surah||!cnt||!mode||!start||!next||!jump)return;
+   const matchedIds=()=>Object.keys(iw.matched||{});
    const snap=()=>{
      if(restoring)return;
      const sm=textOf(od,"roundStatus").match(/الجولة\s+(\d+)\s+من\s+(\d+).*الدورة\s+(\d+)/);
-     checkpoint({active:true,surah:surah.value,cnt:cnt.value,mode:mode.value,round:Number(sm?.[1]||jump.value||1),rounds:Number(sm?.[2]||1),cycle:Number(sm?.[3]||1),seed:exactSession?.seed});
+     checkpoint({
+       active:true,surah:surah.value,cnt:cnt.value,mode:mode.value,
+       round:Number(sm?.[1]||jump.value||1),rounds:Number(sm?.[2]||1),cycle:Number(sm?.[3]||1),
+       seed:exactSession?.seed,matched:matchedIds()
+     });
+   };
+   const restoreMatches=ids=>{
+     if(!Array.isArray(ids)||!ids.length)return;
+     iw.matched={};
+     for(const x of ids){
+       const wb=id.querySelector('#words .item[data-x="'+CSS.escape(String(x))+'"]');
+       const db=id.querySelector('#defs .item[data-x="'+CSS.escape(String(x))+'"]');
+       if(!wb||!db)continue;
+       iw.matched[x]=1;
+       wb.classList.remove("sel");wb.classList.add("matched");wb.disabled=true;
+       db.classList.add("matched");db.disabled=true;
+     }
+     iw.sel=null;
+     if(typeof iw.draw==="function")iw.draw();
+     if(Object.keys(iw.matched).length===iw.round.length&&typeof iw.finish==="function")iw.finish();
    };
    start.addEventListener("click",()=>{
      if(restoring)return;
@@ -200,9 +220,15 @@ async function setupExactResume(){
      const rounds=Math.max(1,Number(exactSession.rounds)||Number(jump.max)||1);
      const steps=Math.max(0,(Math.max(1,Number(exactSession.cycle)||1)-1)*rounds+(Math.max(1,Number(exactSession.round)||1)-1));
      for(let i=0;i<steps;i++)next.click();
+     restoreMatches(exactSession.matched);
      restoring=false;snap();
    }
+   // Save immediately when a pair is attempted/completed, not only when the round changes.
+   id.getElementById("words")?.addEventListener("click",()=>setTimeout(snap,0));
+   id.getElementById("defs")?.addEventListener("click",()=>setTimeout(snap,0));
    next.addEventListener("click",()=>setTimeout(snap,0));
+   od.getElementById("jumpBtn")?.addEventListener("click",()=>setTimeout(snap,0));
+   jump.addEventListener("change",()=>setTimeout(snap,0));
    if(statusBox)new MutationObserver(snap).observe(statusBox,{childList:true,subtree:true,characterData:true});
    snap();
  }
@@ -210,7 +236,11 @@ async function setupExactResume(){
 frame.addEventListener("load",()=>{void setupExactResume()},{once:true});
 
 setInterval(sync,700);
-window.addEventListener("pagehide",sync);
+window.addEventListener("pagehide",()=>{
+  sync();
+  clearTimeout(saveTimer);
+  if(exactSession)void saveProgress(sessionCloudId,exactSession);
+});
 </script>
 </body>
 </html>
