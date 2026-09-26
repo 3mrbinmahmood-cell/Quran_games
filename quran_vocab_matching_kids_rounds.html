@@ -47,7 +47,7 @@ iframe{display:block;width:100%;height:calc(100vh - 92px);border:0;background:#f
  function show(w,i){
    if(!rounds.length)return;
    i=Math.max(0,Math.min(rounds.length-1,i));
-   w.round=rounds[i];w.rno=i+1;w.pos=i+1;w.render();w.stats();
+   w.round=rounds[i];w.rno=i+1;w.pos=rounds.slice(0,i+1).reduce((sum,r)=>sum+r.length,0);w.render();w.stats();
    jump.max=rounds.length;jump.value=i+1;
    status.textContent='الجولة '+(i+1)+' من '+rounds.length+' — الدورة '+cycle;
  }
