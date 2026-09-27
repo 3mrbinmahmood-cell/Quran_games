@@ -1,6 +1,7 @@
 import { firebaseConfig } from "./firebase-config.js";
 const V="12.19.0";
 let auth=null,db=null,api=null,current=null,readyDone=false,readyResolve;
+let googleLoginPromise=null;
 const configured=!!firebaseConfig;
 const listeners=new Set();
 export const accountReady=new Promise(r=>{readyResolve=r});
@@ -30,9 +31,18 @@ export async function register(username,email,password){
 export async function login(email,password){need();return (await api.signInWithEmailAndPassword(auth,email,password)).user}
 export async function googleLogin(){
   need();
-  const cred=await api.signInWithPopup(auth,new api.GoogleAuthProvider());
-  await api.setDoc(api.doc(db,"users",cred.user.uid),{username:cred.user.displayName||"مستخدم",provider:"google",lastLoginAt:api.serverTimestamp()},{merge:true});
-  return cred.user;
+  // Reuse the same in-flight popup request. Starting a second signInWithPopup
+  // cancels the first one and causes auth/cancelled-popup-request.
+  if(googleLoginPromise)return googleLoginPromise;
+  googleLoginPromise=(async()=>{
+    const provider=new api.GoogleAuthProvider();
+    provider.setCustomParameters({prompt:"select_account"});
+    const cred=await api.signInWithPopup(auth,provider);
+    await api.setDoc(api.doc(db,"users",cred.user.uid),{username:cred.user.displayName||"مستخدم",provider:"google",lastLoginAt:api.serverTimestamp()},{merge:true});
+    return cred.user;
+  })();
+  try{return await googleLoginPromise}
+  finally{googleLoginPromise=null}
 }
 export async function resendVerification(){need();if(!auth.currentUser)throw new Error("لا يوجد مستخدم مسجل.");await api.sendEmailVerification(auth.currentUser)}
 export async function refreshUser(){need();if(auth.currentUser){await api.reload(auth.currentUser);await auth.currentUser.getIdToken(true);current=auth.currentUser;emit()}return current}
