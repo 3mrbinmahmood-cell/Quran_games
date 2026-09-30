@@ -50,12 +50,14 @@ h1 {
 
 .games {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 22px;
+    align-items: stretch;
 }
 
 .game {
-    display: block;
+    display: flex;
+    flex-direction: column;
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.15);
     border-radius: 16px;
@@ -63,6 +65,8 @@ h1 {
     text-decoration: none;
     color: white;
     transition: 0.2s;
+    min-width: 0;
+    height: 100%;
 }
 
 .game:hover {
@@ -80,6 +84,7 @@ h1 {
 
 .game p {
     line-height: 1.8;
+    margin-top: 0;
     margin-bottom: 10px;
 }
 
@@ -92,12 +97,14 @@ h1 {
 
 .play {
     display: inline-block;
-    margin-top: 14px;
+    width: fit-content;
+    margin-top: auto;
+    padding: 9px 20px;
     background: #d5b86a;
     color: #10221e;
-    padding: 9px 20px;
     border-radius: 8px;
     font-weight: bold;
+    align-self: flex-start;
 }
 
 footer {
@@ -108,9 +115,17 @@ footer {
 }
 
 @media (max-width: 700px) {
-    .games { grid-template-columns: 1fr; }
-    h1 { font-size: 2rem; }
-    .container { padding: 30px 15px; }
+    .games {
+        grid-template-columns: 1fr;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .container {
+        padding: 30px 15px;
+    }
 }
 </style>
 </head>
@@ -123,19 +138,34 @@ footer {
 <div class="subtitle">
 ألعاب تعليمية تفاعلية لتعلّم اللغة العربية من القرآن الكريم
 <br>
-Qur'anic Vocabulary, Nahw & Sarf Learning Games
+Qur'anic Vocabulary, Nahw &amp; Sarf Learning Games
 </div>
 </header>
 
+
+<!-- منصة الألعاب الجديدة -->
+
 <h2 class="section-title">منصة الألعاب الجديدة</h2>
+
 <div class="games">
+
 <a class="game" href="engine/index.html?v=2">
 <h2>Quran Games Engine — Beta</h2>
-<p>منصة الحسابات الجديدة: الألعاب الأصلية المعتمدة مع تسجيل Google والبريد وحفظ التقدم محليًا وسحابيًا.</p>
-<p class="english">Account platform using the approved original games, with Google/email sign-in and local/cloud progress sync.</p>
+<p>
+منصة الحسابات الجديدة: الألعاب الأصلية المعتمدة مع تسجيل Google والبريد
+وحفظ التقدم محليًا وسحابيًا.
+</p>
+<p class="english">
+Account platform using the approved original games, with Google/email
+sign-in and local/cloud progress sync.
+</p>
 <span class="play">افتح منصة المحرك الجديدة</span>
 </a>
+
 </div>
+
+
+<!-- مفردات القرآن -->
 
 <h2 class="section-title">مفردات القرآن</h2>
 
@@ -143,47 +173,87 @@ Qur'anic Vocabulary, Nahw & Sarf Learning Games
 
 <a class="game" href="quran_vocabulary_game_fixed.html">
 <h2>مفردات القرآن — اختيار من متعدد</h2>
-<p>اختبر معرفتك بمفردات القرآن الكريم ومعانيها من خلال أسئلة الاختيار من متعدد.</p>
-<p class="english">Qur'an Vocabulary — Multiple-choice vocabulary practice.</p>
+<p>
+اختبر معرفتك بمفردات القرآن الكريم ومعانيها من خلال أسئلة الاختيار من متعدد.
+</p>
+<p class="english">
+Qur'an Vocabulary — Multiple-choice vocabulary practice.
+</p>
 <span class="play">ابدأ اللعبة</span>
 </a>
+
 
 <a class="game" href="quran_vocabulary_game_kids_multibrowser.html">
 <h2>مفردات القرآن — للأطفال</h2>
-<p>نسخة مبسطة للأطفال بتعريفات عربية سهلة لتعلّم مفردات القرآن الكريم.</p>
-<p class="english">Qur'an Vocabulary for Kids — Simple vocabulary practice for children.</p>
+<p>
+نسخة مبسطة للأطفال بتعريفات عربية سهلة لتعلّم مفردات القرآن الكريم.
+</p>
+<p class="english">
+Qur'an Vocabulary for Kids — Simple vocabulary practice for children.
+</p>
 <span class="play">ابدأ اللعبة</span>
 </a>
+
 
 <a class="game" href="quran_vocab_matching_full_rounds.html?v=2">
 <h2>لعبة مطابقة مفردات القرآن — النسخة الكاملة</h2>
-<p>النسخة الكاملة: اختر السورة، واختر من ١ إلى ١٠ كلمات في الجولة، ويمكنك الانتقال مباشرةً إلى أي جولة برقمها.</p>
-<p class="english">Full Qur'an Vocabulary Matching — Choose a surah, use 1–10 words per round, and jump directly to any round.</p>
+<p>
+النسخة الكاملة: اختر السورة، واختر من ١ إلى ١٠ كلمات في الجولة،
+ويمكنك الانتقال مباشرةً إلى أي جولة برقمها.
+</p>
+<p class="english">
+Full Qur'an Vocabulary Matching — Choose a surah, use 1–10 words per
+round, and jump directly to any round.
+</p>
 <span class="play">ابدأ النسخة الكاملة — مع الانتقال إلى الجولة</span>
 </a>
 
+
 <a class="game" href="quran_vocab_matching_kids_rounds.html?v=2">
 <h2>لعبة مطابقة مفردات القرآن للصغار</h2>
-<p>النسخة الخاصة بالصغار: اختر السورة و١–١٠ كلمات في الجولة، ويمكنك الانتقال مباشرةً إلى أي جولة برقمها.</p>
-<p class="english">Qur'an Vocabulary Matching for Kids — Choose a surah and match 1–10 Qur'anic words with simple meanings.</p>
+<p>
+النسخة الخاصة بالصغار: اختر السورة و١–١٠ كلمات في الجولة،
+ويمكنك الانتقال مباشرةً إلى أي جولة برقمها.
+</p>
+<p class="english">
+Qur'an Vocabulary Matching for Kids — Choose a surah and match
+1–10 Qur'anic words with simple meanings.
+</p>
 <span class="play">ابدأ لعبة الصغار — مع الانتقال إلى الجولة</span>
 </a>
 
+
 <a class="game" href="istakhraj_quran_vocab_game.html">
 <h2>استخرج مفردات القرآن</h2>
-<p>اقرأ الآية أو العبارة، ثم استخرج الكلمة القرآنية التي يطابق معناها التعريف المعروض.</p>
-<p class="english">Extract the Qur'anic Word — Read the verse or sentence and identify the word matching the given definition.</p>
+<p>
+اقرأ الآية أو العبارة، ثم استخرج الكلمة القرآنية التي يطابق معناها
+التعريف المعروض.
+</p>
+<p class="english">
+Extract the Qur'anic Word — Read the verse or sentence and identify
+the word matching the given definition.
+</p>
 <span class="play">ابدأ اللعبة</span>
 </a>
 
+
 <a class="game" href="‏‏istakhraj_quran_vocab_game - نسخة.html">
 <h2>استخرج مفردات القرآن — للأطفال</h2>
-<p>نسخة مبسطة للأطفال: اقرأ الآية أو العبارة ثم استخرج الكلمة المناسبة للتعريف السهل.</p>
-<p class="english">Extract the Qur'anic Word for Kids — Find the Qur'anic word that matches the simple definition.</p>
+<p>
+نسخة مبسطة للأطفال: اقرأ الآية أو العبارة ثم استخرج الكلمة المناسبة
+للتعريف السهل.
+</p>
+<p class="english">
+Extract the Qur'anic Word for Kids — Find the Qur'anic word that
+matches the simple definition.
+</p>
 <span class="play">ابدأ اللعبة</span>
 </a>
 
 </div>
+
+
+<!-- الصرف -->
 
 <h2 class="section-title">الصرف</h2>
 
@@ -191,19 +261,31 @@ Qur'anic Vocabulary, Nahw & Sarf Learning Games
 
 <a class="game" href="sarf_game_full_list.html">
 <h2>لعبة الصرف — النسخة الكاملة</h2>
-<p>تدرّب على أوزان الأفعال وتصريفها من خلال مجموعة واسعة من الأفعال.</p>
-<p class="english">Sarf Full — Comprehensive Arabic morphology and verb-pattern practice.</p>
+<p>
+تدرّب على أوزان الأفعال وتصريفها من خلال مجموعة واسعة من الأفعال.
+</p>
+<p class="english">
+Sarf Full — Comprehensive Arabic morphology and verb-pattern practice.
+</p>
 <span class="play">ابدأ اللعبة</span>
 </a>
 
+
 <a class="game" href="sarf_game_light.html">
 <h2>لعبة الصرف — للأطفال</h2>
-<p>نسخة مبسطة للتعرّف على أوزان الأفعال، بفعل واحد لكل وزن.</p>
-<p class="english">Sarf for Kids — A simple introduction to Arabic verb patterns.</p>
+<p>
+نسخة مبسطة للتعرّف على أوزان الأفعال، بفعل واحد لكل وزن.
+</p>
+<p class="english">
+Sarf for Kids — A simple introduction to Arabic verb patterns.
+</p>
 <span class="play">ابدأ اللعبة</span>
 </a>
 
 </div>
+
+
+<!-- النحو -->
 
 <h2 class="section-title">النحو</h2>
 
@@ -211,22 +293,34 @@ Qur'anic Vocabulary, Nahw & Sarf Learning Games
 
 <a class="game" href="‏‏nahw_quran_game_v2 - نسخة.html?v=5">
 <h2>لعبة النحو القرآني</h2>
-<p>تدرّب على قواعد النحو من خلال أمثلة وتحليلات مأخوذة من القرآن الكريم.</p>
-<p class="english">Qur'anic Nahw — Practice Arabic grammar using Qur'anic examples.</p>
+<p>
+تدرّب على قواعد النحو من خلال أمثلة وتحليلات مأخوذة من القرآن الكريم.
+</p>
+<p class="english">
+Qur'anic Nahw — Practice Arabic grammar using Qur'anic examples.
+</p>
 <span class="play">ابدأ اللعبة</span>
 </a>
 
-</div>
 
 <a class="game" href="nahw_wadih_game_expanded.html">
 <h2>لعبة النحو الواضح</h2>
-<p>تدرّب على التحليل النحوي من خلال أمثلة كتاب «النحو الواضح»،.</p>
-<p class="english">Al-Nahw Al-Wadih Grammar Game — Practice Arabic grammatical analysis using examples from Al-Nahw Al-Wadih.</p>
+<p>
+تدرّب على التحليل النحوي من خلال أمثلة كتاب «النحو الواضح»،
+مع تحديد نوع الكلمة ووظيفتها وحالتها وعلامة إعرابها ونوع الجملة،
+ثم مراجعة الإعراب الكامل.
+</p>
+<p class="english">
+Al-Nahw Al-Wadih Grammar Game — Practice Arabic grammatical analysis
+using examples from Al-Nahw Al-Wadih, with complete parsing after
+each exercise.
+</p>
 <span class="play">ابدأ لعبة النحو الواضح</span>
 </a>
 
 </div>
-    
+
+
 <footer>
 تعلّم من القرآن · اختبر نفسك · راجع · تقدّم
 <br>
