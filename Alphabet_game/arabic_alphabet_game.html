@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الحروف العربية</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Tahoma,Arial,sans-serif;
+ background:linear-gradient(135deg,#fff7d6,#dff5ff);
+ color:#263238;
+}
+.screen{
+ display:none;
+ min-height:100vh;
+ padding:25px;
+ text-align:center;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+}
+.screen.active{display:flex}
+
+h1{font-size:clamp(2.5rem,7vw,5rem)}
+
+button{
+ font-family:inherit;
+ cursor:pointer;
+ border:0;
+}
+
+.menu{
+ width:min(500px,90%);
+ min-height:85px;
+ margin:10px;
+ border-radius:25px;
+ font-size:2rem;
+ font-weight:bold;
+ box-shadow:0 6px 0 #bbb;
+}
+.learn{background:#fff0a0}
+.review{background:#bdeeff}
+.game{background:#c9f5c5}
+
+.groups{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(140px,250px));
+ gap:15px;
+ width:min(600px,95%);
+}
+.group{
+ background:white;
+ border-radius:25px;
+ padding:15px;
+ min-height:120px;
+ box-shadow:0 5px 0 #bbb;
+}
+.group-name{font-size:1.1rem;font-weight:bold}
+.group-letters{
+ font-family:"Traditional Arabic",serif;
+ font-size:3.5rem;
+}
+
+.big-letter{
+ font-family:"Traditional Arabic",serif;
+ font-size:clamp(14rem,45vw,28rem);
+ line-height:1;
+ cursor:pointer;
+}
+.name{
+ font-size:3rem;
+ font-weight:bold;
+}
+
+.controls{
+ display:flex;
+ gap:10px;
+ width:min(700px,95%);
+ margin-top:25px;
+}
+.control{
+ flex:1;
+ padding:18px 5px;
+ border-radius:18px;
+ background:white;
+ font-size:1.25rem;
+ font-weight:bold;
+ box-shadow:0 4px 0 #bbb;
+}
+
+.letters{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(130px,220px));
+ gap:20px;
+}
+.letter{
+ background:white;
+ border-radius:25px;
+ min-height:180px;
+ font-family:"Traditional Arabic",serif;
+ font-size:8rem;
+ box-shadow:0 6px 0 #bbb;
+}
+
+.question{
+ font-size:3rem;
+ font-weight:bold;
+ margin:25px;
+}
+.options{
+ display:flex;
+ gap:20px;
+ flex-wrap:wrap;
+ justify-content:center;
+}
+.option{
+ width:180px;
+ height:200px;
+ border-radius:25px;
+ background:white;
+ font-family:"Traditional Arabic",serif;
+ font-size:8rem;
+ box-shadow:0 6px 0 #bbb;
+}
+.correct{background:#a9efa5!important}
+
+#celebrate{
+ display:none;
+ position:fixed;
+ inset:0;
+ background:rgba(255,255,255,.94);
+ z-index:20;
+ align-items:center;
+ justify-content:center;
+ flex-direction:column;
+}
+#celebrate.show{display:flex}
+#celebrate div{font-size:7rem}
+#celebrate h1{font-size:5rem}
+
+.progress{
+ width:min(600px,90%);
+ height:14px;
+ background:#ddd;
+ border-radius:20px;
+ overflow:hidden;
+}
+#bar{
+ height:100%;
+ background:#70c875;
+ width:0;
+}
+
+@media(max-width:500px){
+ .option{width:120px;height:150px;font-size:6rem}
+ .letter{font-size:6rem;min-height:140px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME -->
+
+<div id="home" class="screen active">
+ <h1>الحروف العربية</h1>
+
+ <button class="menu learn" onclick="chooseMode('learn')">
+  تعلّم الحروف
+ </button>
+
+ <button class="menu review" onclick="chooseMode('review')">
+  مراجعة
+ </button>
+
+ <button class="menu game" onclick="chooseMode('game')">
+  لعبة
+ </button>
+</div>
+
+
+<!-- GROUP MENU -->
+
+<div id="groupPage" class="screen">
+ <h1 id="groupTitle">اختر المجموعة</h1>
+ <div id="groups" class="groups"></div>
+
+ <button class="menu" onclick="goHome()">
+  الرئيسية
+ </button>
+</div>
+
+
+<!-- LEARN -->
+
+<div id="learnPage" class="screen">
+
+ <div id="learnGroup"></div>
+
+ <div class="progress">
+  <div id="bar"></div>
+ </div>
+
+ <div id="bigLetter"
+      class="big-letter"
+      onclick="playCurrent()">
+  ا
+ </div>
+
+ <div id="letterName" class="name">
+  ألف
+ </div>
+
+ <div class="controls">
+  <button class="control" onclick="goHome()">الرئيسية</button>
+  <button class="control" onclick="playCurrent()">🔊 كرّر</button>
+  <button class="control" onclick="nextLetter()">التالي</button>
+ </div>
+</div>
+
+
+<!-- REVIEW -->
+
+<div id="reviewPage" class="screen">
+
+ <h1>مراجعة</h1>
+
+ <h2 id="reviewTitle"></h2>
+
+ <div id="reviewLetters" class="letters"></div>
+
+ <div class="controls">
+  <button class="control" onclick="goHome()">الرئيسية</button>
+  <button class="control" onclick="playReview()">🔊 استمع للجميع</button>
+  <button class="control" onclick="chooseMode('review')">المجموعات</button>
+ </div>
+</div>
+
+
+<!-- GAME -->
+
+<div id="gamePage" class="screen">
+
+ <div id="gameGroup"></div>
+
+ <div style="font-size:1.5rem">
+  ⭐ <span id="score">0</span>
+ </div>
+
+ <div class="question">
+  أين حرف <span id="questionName"></span>؟
+ </div>
+
+ <div id="options" class="options"></div>
+
+ <div class="controls">
+  <button class="control" onclick="goHome()">الرئيسية</button>
+  <button class="control" onclick="playTarget()">🔊 كرّر</button>
+  <button class="control" onclick="chooseMode('game')">المجموعات</button>
+ </div>
+</div>
+
+
+<!-- CELEBRATION -->
+
+<div id="celebrate">
+ <div>⭐ ⭐ ⭐</div>
+ <h1>أحسنت!</h1>
+</div>
+
+
+<script>
+
+/* ==============================
+   DATA
+============================== */
+
+const G=[
+
+[
+["ا","ألف","01_alif.mp3"],
+["ب","باء","02_baa.mp3"],
+["ت","تاء","03_taa.mp3"],
+["ث","ثاء","04_thaa.mp3"]
+],
+
+[
+["ج","جيم","05_jeem.mp3"],
+["ح","حاء","06_haa.mp3"],
+["خ","خاء","07_khaa.mp3"],
+["د","دال","08_daal.mp3"]
+],
+
+[
+["ذ","ذال","09_dhaal.mp3"],
+["ر","راء","10_raa.mp3"],
+["ز","زاي","11_zaay.mp3"],
+["س","سين","12_seen.mp3"]
+],
+
+[
+["ش","شين","13_sheen.mp3"],
+["ص","صاد","14_saad.mp3"],
+["ض","ضاد","15_daad.mp3"],
+["ط","طاء","16_taa_emphatic.mp3"]
+],
+
+[
+["ظ","ظاء","17_zaa.mp3"],
+["ع","عين","18_ayn.mp3"],
+["غ","غين","19_ghayn.mp3"],
+["ف","فاء","20_faa.mp3"]
+],
+
+[
+["ق","قاف","21_qaaf.mp3"],
+["ك","كاف","22_kaaf.mp3"],
+["ل","لام","23_laam.mp3"],
+["م","ميم","24_meem.mp3"]
+],
+
+[
+["ن","نون","25_noon.mp3"],
+["هـ","هاء","26_haa2.mp3"],
+["و","واو","27_waaw.mp3"],
+["ي","ياء","28_yaa.mp3"]
+]
+
+];
+
+const GN=[
+"المجموعة الأولى",
+"المجموعة الثانية",
+"المجموعة الثالثة",
+"المجموعة الرابعة",
+"المجموعة الخامسة",
+"المجموعة السادسة",
+"المجموعة السابعة"
+];
+
+let mode="";
+let group=0;
+let index=0;
+let target=null;
+let score=0;
+let audio=null;
+
+
+/* ==============================
+   SCREEN
+============================== */
+
+function show(id){
+
+ document.querySelectorAll(".screen")
+ .forEach(x=>x.classList.remove("active"));
+
+ document.getElementById(id)
+ .classList.add("active");
+}
+
+function goHome(){
+ stopAudio();
+ show("home");
+}
+
+
+/* ==============================
+   AUDIO
+============================== */
+
+function stopAudio(){
+ if(audio){
+  audio.pause();
+  audio.currentTime=0;
+ }
+}
+
+function play(item){
+
+ stopAudio();
+
+ audio=new Audio("audio/"+item[2]);
+
+ audio.play().catch(function(e){
+  console.log("Audio file not found:",item[2]);
+ });
+}
+
+
+/* ==============================
+   GROUP MENU
+============================== */
+
+function chooseMode(m){
+
+ mode=m;
+
+ let title="اختر المجموعة";
+
+ if(m==="learn") title="اختر مجموعة للتعلّم";
+ if(m==="review") title="اختر مجموعة للمراجعة";
+ if(m==="game") title="اختر مجموعة للعبة";
+
+ document.getElementById("groupTitle").textContent=title;
+
+ const box=document.getElementById("groups");
+ box.innerHTML="";
+
+ G.forEach(function(g,i){
+
+  let b=document.createElement("button");
+
+  b.className="group";
+
+  b.innerHTML=
+  '<div class="group-name">'+GN[i]+'</div>'+
+  '<div class="group-letters">'+
+  g.map(x=>x[0]).join(" ")+
+  '</div>';
+
+  b.onclick=function(){
+   selectGroup(i);
+  };
+
+  box.appendChild(b);
+ });
+
+ if(m==="game"){
+
+  let all=document.createElement("button");
+
+  all.className="group";
+
+  all.style.gridColumn="1/-1";
+
+  all.innerHTML=
+  '<div class="group-name">كل الحروف</div>'+
+  '<div class="group-letters">ا ← ي</div>';
+
+  all.onclick=function(){
+   startGame(-1);
+  };
+
+  box.appendChild(all);
+ }
+
+ show("groupPage");
+}
+
+
+function selectGroup(i){
+
+ group=i;
+
+ if(mode==="learn") startLearn(i);
+ if(mode==="review") startReview(i);
+ if(mode==="game") startGame(i);
+}
+
+
+/* ==============================
+   LEARN
+============================== */
+
+function startLearn(g){
+
+ group=g;
+ index=0;
+
+ show("learnPage");
+
+ updateLearn();
+
+ setTimeout(playCurrent,300);
+}
+
+
+function updateLearn(){
+
+ let item=G[group][index];
+
+ document.getElementById("bigLetter").textContent=item[0];
+
+ document.getElementById("letterName").textContent=item[1];
+
+ document.getElementById("learnGroup").textContent=GN[group];
+
+ document.getElementById("bar").style.width=
+ ((index+1)/4*100)+"%";
+}
+
+
+function playCurrent(){
+
+ play(G[group][index]);
+}
+
+
+function nextLetter(){
+
+ index++;
+
+ if(index>=4){
+  startReview(group);
+  return;
+ }
+
+ updateLearn();
+
+ setTimeout(playCurrent,200);
+}
+
+
+/* ==============================
+   REVIEW
+============================== */
+
+function startReview(g){
+
+ group=g;
+
+ document.getElementById("reviewTitle").textContent=GN[g];
+
+ const box=document.getElementById("reviewLetters");
+
+ box.innerHTML="";
+
+ G[g].forEach(function(item){
+
+  let b=document.createElement("button");
+
+  b.className="letter";
+
+  b.textContent=item[0];
+
+  b.onclick=function(){
+   play(item);
+  };
+
+  box.appendChild(b);
+ });
+
+ show("reviewPage");
+}
+
+
+function playReview(){
+
+ let i=0;
+
+ function next(){
+
+  if(i>=4) return;
+
+  let item=G[group][i];
+
+  stopAudio();
+
+  audio=new Audio("audio/"+item[2]);
+
+  audio.onended=function(){
+   i++;
+   setTimeout(next,200);
+  };
+
+  audio.play().catch(function(){
+   i++;
+   next();
+  });
+ }
+
+ next();
+}
+
+
+/* ==============================
+   GAME
+============================== */
+
+function startGame(g){
+
+ group=g;
+ score=0;
+
+ document.getElementById("score").textContent=0;
+
+ if(g===-1){
+  document.getElementById("gameGroup").textContent="كل الحروف";
+ }else{
+  document.getElementById("gameGroup").textContent=GN[g];
+ }
+
+ show("gamePage");
+
+ newQuestion();
+}
+
+
+function gamePool(){
+
+ if(group===-1){
+  return G.flat();
+ }
+
+ return G[group];
+}
+
+
+function shuffle(a){
+
+ let copy=a.slice();
+
+ for(let i=copy.length-1;i>0;i--){
+
+  let j=Math.floor(Math.random()*(i+1));
+
+  let t=copy[i];
+  copy[i]=copy[j];
+  copy[j]=t;
+ }
+
+ return copy;
+}
+
+
+function newQuestion(){
+
+ let pool=gamePool();
+
+ target=pool[
+  Math.floor(Math.random()*pool.length)
+ ];
+
+ document.getElementById("questionName").textContent=target[1];
+
+ let others=G.flat().filter(
+  x=>x[0]!==target[0]
+ );
+
+ others=shuffle(others);
+
+ let choices=shuffle([
+  target,
+  others[0],
+  others[1]
+ ]);
+
+ const box=document.getElementById("options");
+
+ box.innerHTML="";
+
+ choices.forEach(function(item){
+
+  let b=document.createElement("button");
+
+  b.className="option";
+
+  b.textContent=item[0];
+
+  b.onclick=function(){
+   answer(item,b);
+  };
+
+  box.appendChild(b);
+ });
+
+ setTimeout(playTarget,300);
+}
+
+
+function playTarget(){
+
+ if(target) play(target);
+}
+
+
+function answer(item,button){
+
+ if(item[0]===target[0]){
+
+  button.classList.add("correct");
+
+  score++;
+
+  document.getElementById("score").textContent=score;
+
+  setTimeout(celebrate,300);
+
+ }else{
+
+  playTarget();
+
+  button.animate(
+   [
+    {transform:"translateX(0)"},
+    {transform:"translateX(-10px)"},
+    {transform:"translateX(10px)"},
+    {transform:"translateX(0)"}
+   ],
+   {duration:300}
+  );
+ }
+}
+
+
+/* ==============================
+   CELEBRATION
+============================== */
+
+function celebrate(){
+
+ const c=document.getElementById("celebrate");
+
+ c.classList.add("show");
+
+ setTimeout(function(){
+
+  c.classList.remove("show");
+
+  newQuestion();
+
+ },900);
+}
+
+</script>
+
+</body>
+</html>
