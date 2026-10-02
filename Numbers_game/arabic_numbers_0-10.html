@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>الأرقام العربية</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Tahoma,Arial;background:linear-gradient(135deg,#fff7d6,#dff5ff);color:#263238}button{font-family:inherit;border:0;cursor:pointer}.page{display:none;min-height:100vh;padding:25px;text-align:center;align-items:center;justify-content:center;flex-direction:column}.on{display:flex}h1{font-size:clamp(2.5rem,8vw,5rem)}.main{width:min(500px,92%);padding:22px;margin:10px;border-radius:24px;font-size:1.8rem;font-weight:bold;box-shadow:0 6px #bbb}.learn{background:#fff0a0}.review{background:#bdeeff}.game{background:#c9f5c5}.groups{display:grid;grid-template-columns:1fr 1fr;gap:15px;width:min(600px,95%)}.grp{padding:18px;border-radius:22px;background:#fff;box-shadow:0 5px #bbb;font-size:1.1rem;font-weight:bold}.nums{display:block;font-size:3.3rem;margin-top:8px}.big{font-size:clamp(14rem,50vw,28rem);font-weight:bold;line-height:1;cursor:pointer}.name{font-size:3rem;font-weight:bold}.controls{display:flex;gap:8px;width:min(700px,95%);margin-top:25px}.ctrl{flex:1;padding:18px 5px;border-radius:18px;background:#fff;font-size:1.2rem;font-weight:bold;box-shadow:0 4px #bbb}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.card{width:180px;height:170px;border-radius:22px;background:#fff;font-size:7rem;font-weight:bold;box-shadow:0 5px #bbb}.options{display:flex;gap:15px;flex-wrap:wrap;justify-content:center}.opt{width:170px;height:190px;border-radius:22px;background:#fff;font-size:7rem;font-weight:bold;box-shadow:0 5px #bbb}.question{font-size:3rem;font-weight:bold;margin:25px}.good{background:#a9efa5!important}#yay{display:none;position:fixed;inset:0;background:#fffffff2;z-index:20;align-items:center;justify-content:center;flex-direction:column;font-size:5rem}#yay.show{display:flex}@media(max-width:500px){.card,.opt{width:125px;height:145px;font-size:5rem}}
+</style>
+</head>
+<body>
+
+<div id="home" class="page on">
+<h1>الأرقام العربية</h1>
+<h2>٠ ١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩ ١٠</h2>
+<button class="main learn" onclick="groupsMenu('learn')">تعلّم الأرقام</button>
+<button class="main review" onclick="groupsMenu('review')">مراجعة</button>
+<button class="main game" onclick="groupsMenu('game')">لعبة</button>
+</div>
+
+<div id="groups" class="page">
+<h1>اختر المجموعة</h1>
+<div id="groupBox" class="groups"></div>
+<button class="main" onclick="show('home')">الرئيسية</button>
+</div>
+
+<div id="learn" class="page">
+<h2 id="learnGroup"></h2>
+<div id="big" class="big" onclick="playCurrent()">٠</div>
+<div id="name" class="name">صفر</div>
+<div class="controls">
+<button class="ctrl" onclick="show('home')">الرئيسية</button>
+<button class="ctrl" onclick="playCurrent()">🔊 كرّر</button>
+<button class="ctrl" onclick="next()">التالي</button>
+</div>
+</div>
+
+<div id="review" class="page">
+<h1>مراجعة</h1>
+<h2 id="reviewGroup"></h2>
+<div id="reviewBox" class="grid"></div>
+<div class="controls">
+<button class="ctrl" onclick="show('home')">الرئيسية</button>
+<button class="ctrl" onclick="groupsMenu('review')">المجموعات</button>
+</div>
+</div>
+
+<div id="game" class="page">
+<h2 id="gameGroup"></h2>
+<div>⭐ <span id="score">0</span></div>
+<div class="question">أين الرقم <span id="targetName"></span>؟</div>
+<div id="options" class="options"></div>
+<div class="controls">
+<button class="ctrl" onclick="show('home')">الرئيسية</button>
+<button class="ctrl" onclick="playTarget()">🔊 كرّر</button>
+<button class="ctrl" onclick="groupsMenu('game')">المجموعات</button>
+</div>
+</div>
+
+<div id="yay">⭐ ⭐ ⭐<br>أحسنت!</div>
+
+<script>
+const G=[
+[["٠","صفر","00_sifr.mp3"],["١","واحد","01_wahid.mp3"],["٢","اثنان","02_ithnan.mp3"],["٣","ثلاث","03_thalatha.mp3"]],
+[["٤","أربع","04_arbaa.mp3"],["٥","خمس","05_khamsa.mp3"],["٦","ست","06_sitta.mp3"],["٧","سبع","07_sabaa.mp3"]],
+[["٨","ثمان","08_thamaniya.mp3"],["٩","تسع","09_tisaa.mp3"],["١٠","عشر","10_ashara.mp3"]]
+];
+
+const GN=["المجموعة الأولى","المجموعة الثانية","المجموعة الثالثة"];
+
+let mode="",g=0,i=0,target=null,score=0,audio=null;
+
+function show(id){
+ stop();
+ document.querySelectorAll(".page").forEach(x=>x.classList.remove("on"));
+ document.getElementById(id).classList.add("on");
+}
+
+function stop(){
+ if(audio){audio.pause();audio.currentTime=0;audio=null}
+}
+
+function play(item){
+ stop();
+ audio=new Audio("audio/"+item[2]);
+ audio.play().catch(e=>console.log("Missing audio:",item[2]));
+}
+
+function groupsMenu(m){
+ mode=m;
+ const box=document.getElementById("groupBox");
+ box.innerHTML="";
+
+ G.forEach((x,n)=>{
+  const b=document.createElement("button");
+  b.className="grp";
+  b.innerHTML=GN[n]+'<span class="nums">'+x.map(z=>z[0]).join(" ")+"</span>";
+  b.onclick=()=>select(n);
+  box.appendChild(b);
+ });
+
+ if(m==="game"){
+  const b=document.createElement("button");
+  b.className="grp";
+  b.style.gridColumn="1/-1";
+  b.innerHTML='كل الأرقام<span class="nums">٠ ١ ٢ ٣ ٤ ٥ ٦ ٧ ٨ ٩ ١٠</span>';
+  b.onclick=()=>startGame(-1);
+  box.appendChild(b);
+ }
+
+ show("groups");
+}
+
+function select(n){
+ if(mode==="learn")startLearn(n);
+ if(mode==="review")startReview(n);
+ if(mode==="game")startGame(n);
+}
+
+function startLearn(n){
+ g=n;i=0;
+ show("learn");
+ updateLearn();
+ setTimeout(playCurrent,250);
+}
+
+function updateLearn(){
+ const x=G[g][i];
+ document.getElementById("learnGroup").textContent=GN[g];
+ document.getElementById("big").textContent=x[0];
+ document.getElementById("name").textContent=x[1];
+}
+
+function playCurrent(){play(G[g][i])}
+
+function next(){
+ i++;
+ if(i>=G[g].length){startReview(g);return}
+ updateLearn();
+ setTimeout(playCurrent,200);
+}
+
+function startReview(n){
+ g=n;
+ document.getElementById("reviewGroup").textContent=GN[n];
+ const box=document.getElementById("reviewBox");
+ box.innerHTML="";
+
+ G[n].forEach(x=>{
+  const b=document.createElement("button");
+  b.className="card";
+  b.textContent=x[0];
+  b.onclick=()=>play(x);
+  box.appendChild(b);
+ });
+
+ show("review");
+}
+
+function allNumbers(){return G.flat()}
+
+function startGame(n){
+ g=n;score=0;
+ document.getElementById("score").textContent=score;
+ document.getElementById("gameGroup").textContent=n===-1?"كل الأرقام":GN[n];
+ show("game");
+ newQuestion();
+}
+
+function shuffle(x){return x.slice().sort(()=>Math.random()-.5)}
+
+function newQuestion(){
+ const pool=g===-1?allNumbers():G[g];
+ target=pool[Math.floor(Math.random()*pool.length)];
+ document.getElementById("targetName").textContent=target[1];
+
+ const wrong=shuffle(allNumbers().filter(x=>x[0]!==target[0]));
+ const choices=shuffle([target,wrong[0],wrong[1]]);
+ const box=document.getElementById("options");
+ box.innerHTML="";
+
+ choices.forEach(x=>{
+  const b=document.createElement("button");
+  b.className="opt";
+  b.textContent=x[0];
+  b.onclick=()=>answer(x,b);
+  box.appendChild(b);
+ });
+
+ setTimeout(playTarget,250);
+}
+
+function playTarget(){if(target)play(target)}
+
+function answer(x,b){
+ if(x[0]===target[0]){
+  b.classList.add("good");
+  score++;
+  document.getElementById("score").textContent=score;
+  setTimeout(celebrate,250);
+ }else{
+  playTarget();
+  b.animate(
+   [{transform:"translateX(-8px)"},{transform:"translateX(8px)"},{transform:"translateX(0)"}],
+   {duration:250}
+  );
+ }
+}
+
+function celebrate(){
+ const y=document.getElementById("yay");
+ y.classList.add("show");
+ setTimeout(()=>{
+  y.classList.remove("show");
+  newQuestion();
+ },850);
+}
+</script>
+
+</body>
+</html>
