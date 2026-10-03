@@ -30,6 +30,7 @@
 <div class="section-divider"></div>
 <div class="grid">
 <div class="game"><span class="tag ready">Original + Cloud</span><h2>لعبة النحو القرآني</h2><p>اللعبة الأصلية؛ بعد الأسئلة تظهر الآية كاملة وإعراب المصدر قبل الانتقال، مع حفظ موضع التقدم.</p><a href="original-game.html?game=nahw&v=5">ابدأ اللعبة</a></div>
+<div class="game"><span class="tag ready">Original + Cloud</span><h2>لعبة النحو الواضح</h2><p>تدرّب على أمثلة النحو الواضح مع الإعراب الكامل وحفظ الإجابات وموضع التقدم محليًا وسحابيًا.</p><a href="original-game.html?game=nahw-wadih&v=6">ابدأ لعبة النحو الواضح</a></div>
 </div>
 </section></div>
 <div id="modal" class="modal hide"><div class="box"><h2>الحساب</h2><p id="firebaseNote" class="small"></p>
@@ -71,6 +72,6 @@ $("verifyBtn").onclick=()=>run(()=>resendVerification());
 $("refreshBtn").onclick=()=>run(()=>refreshUser(),{closeIf:u=>!!u?.emailVerified});
 $("logoutBtn").onclick=()=>run(()=>logout());
 onAccount(u=>{if(u){$("accountState").textContent=(u.displayName||u.email)+(u.emailVerified?" — موثّق":" — البريد غير موثّق");$("logoutBtn").hidden=false}else{$("accountState").textContent="وضع محلي";$("logoutBtn").hidden=true}});
-function updateGlobal(){const ids=["sarf-light","vocab-full","vocab-kids","matching-full","matching-kids","istakhraj-full","istakhraj-kids","sarf-full","nahw"];let sum=0,started=0;for(const id of ids){try{const x=JSON.parse(localStorage.getItem("qg-engine-progress:"+id)||"{}");if(x.updatedAt)started++;sum+=Number(x.globalPercent||0)}catch{}}const p=Math.round(sum/ids.length);$("globalBar").style.width=p+"%";$("globalText").textContent=p+"% عبر ٩ ألعاب — بدأ المستخدم "+started+" / 9";}
+function updateGlobal(){const ids=["sarf-light","vocab-full","vocab-kids","matching-full","matching-kids","istakhraj-full","istakhraj-kids","sarf-full","nahw","nahw-wadih"];let sum=0,started=0;for(const id of ids){try{const x=JSON.parse(localStorage.getItem("qg-engine-progress:"+id)||"{}");if(x.updatedAt)started++;sum+=Number(x.globalPercent||0)}catch{}}const p=Math.round(sum/ids.length);$("globalBar").style.width=p+"%";$("globalText").textContent=p+"% عبر "+ids.length+" ألعاب — بدأ المستخدم "+started+" / "+ids.length;}
 updateGlobal();window.addEventListener("qg-progress",updateGlobal);
 </script></body></html>
