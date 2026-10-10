@@ -105,7 +105,7 @@ const roles={
 };
 const states=[...new Set(rounds.map(r=>r.token.state))];
 const frames=[...new Set(DATA.examples.map(e=>e.frame))];
-const markers={built:[...new Set(rounds.filter(r=>r.token.built).map(r=>r.token.mark))],inflected:[...new Set(rounds.filter(r=>!r.token.built).map(r=>r.token.mark))]};
+const markers={built:[...new Set(rounds.filter(r=>!r.custom&&r.token.built).map(r=>r.token.mark))],inflected:[...new Set(rounds.filter(r=>!r.custom&&!r.token.built).map(r=>r.token.mark))]};
 let state={version:2,current:rounds[0].id,part:'all',lesson:'all',theme:'light',answers:{}};
 let storageWorks=true, filterCache=null, filterKey='', optionCache=new Map();
 function hash(text){let x=2166136261;for(const c of text)x=Math.imul(x^c.charCodeAt(0),16777619);return x>>>0;}
