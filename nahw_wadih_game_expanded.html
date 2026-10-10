@@ -104,7 +104,7 @@ const roles={
  'حرف':['حرف جر','حرف استفهام','حرف نفي','حرف نهي وجزم','حرف نفي وجزم','حرف نفي ونصب','حرف توكيد ونصب','حرف مصدري ونصب','حرف تمنّ ونصب','حرف ترجّ ونصب','حرف تشبيه ونصب','حرف تنبيه','حرف عطف','حرف نداء','حرف استثناء','واو الحال','واو المعية','فاء السببية','لام الأمر','لام التعليل','لام الجحود','لام جواب القسم','نون الوقاية','حرف مصدري ظرفي']
 };
 const states=[...new Set(rounds.map(r=>r.token.state))];
-const frames=[...new Set(DATA.examples.map(e=>e.frame))];
+const frames=[...new Set(DATA.examples.filter(e=>e.quizType!=='topic').map(e=>e.frame))];
 const markers={built:[...new Set(rounds.filter(r=>!r.custom&&r.token.built).map(r=>r.token.mark))],inflected:[...new Set(rounds.filter(r=>!r.custom&&!r.token.built).map(r=>r.token.mark))]};
 let state={version:2,current:rounds[0].id,part:'all',lesson:'all',theme:'light',answers:{}};
 let storageWorks=true, filterCache=null, filterKey='', optionCache=new Map();
