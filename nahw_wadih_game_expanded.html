@@ -234,7 +234,7 @@ $('scope').textContent=`${ar(DATA.stats.source_chapters)} بابًا • ${ar(DA
 $('bookMeta').textContent=`المصدر: ${DATA.book}، تأليف ${DATA.authors.join(' و')}. ${DATA.edition}.`;
 $('editorial').textContent=DATA.editorial_note;$('coverageNote').textContent=DATA.coverage_note;
 // Fail visibly if a future edit corrupts the bank instead of silently dropping questions.
-if(byId.size!==rounds.length||rounds.some(r=>FIELDS.some(f=>typeof correctFor(r,f)!=='string'||!correctFor(r,f))))throw new Error('Invalid question bank');
+if(byId.size!==rounds.length||rounds.some(r=>fieldsFor(r).some(f=>typeof correctFor(r,f)!=='string'||!correctFor(r,f))))throw new Error('Invalid question bank');
 readState();updateLessons();renderCoverage();render();save();
 })();
 
