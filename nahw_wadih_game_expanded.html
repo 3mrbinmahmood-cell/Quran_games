@@ -187,7 +187,7 @@ function renderQuestions(r){
    if(selected!==undefined){button.disabled=true;if(value===answer){button.classList.add('ok');button.append(el('span',selected===answer?'إجابتك صحيحة':'الإجابة الصحيحة','choice-status'));}else if(value===selected){button.classList.add('bad');button.append(el('span','تحتاج إلى مراجعة','choice-status'));}}
    button.addEventListener('click',()=>choose(r.id,f,value));group.append(button);
   }
-  fs.append(group);fs.append(el('p',selected===undefined?'اختر الإجابة التي تطابق باب المصدر.':selected===answer?'صحيح.':`الإجابة الصحيحة: ${answer}.`,'feedback'));$('questions').append(fs);
+  fs.append(group);fs.append(el('p',selected===undefined?(r.custom?'اختر الإجابة التي تطابق باب المصدر.':'اختر إجابة واحدة.'):selected===answer?'صحيح.':`الإجابة الصحيحة: ${answer}.`,'feedback'));$('questions').append(fs);
  });
  const n=Object.keys(state.answers[r.id]||{}).length;$('roundStatus').textContent=r.custom?(n?'اكتمل سؤال تحديد الدرس. يمكنك مراجعة المصدر ثم المتابعة.':'أجب عن سؤال تحديد الدرس للمتابعة.'):(n===5?'اكتملت الإجابات الخمس. اقرأ الإعراب، ثم انتقل عندما تكون مستعدًا.':`أجبت عن ${ar(n)} من خمسة أسئلة في هذه الجولة.`);
 }
